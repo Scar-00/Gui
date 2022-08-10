@@ -28,4 +28,4 @@ dynamic: $(OBJ)
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 clean:
-	rm -rf $(OBJ) libgui.a gui.dll libgui.lib libgui.exp
+	rm -rf $(OBJ) libgui.a gui.dll gui.lib gui.exp
