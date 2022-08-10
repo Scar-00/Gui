@@ -1,0 +1,413 @@
+make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# This program built for i386-pc-mingw32
+ 
+
+# Make data base, printed on Tue Aug 09 15:39:57 2022
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# makefile (from `makefile', line 19)
+OBJ = $(SRC:.c=.o)
+# makefile (from `makefile', line 18)
+SRC = $(wildcard src/**/**/*.c) $(wildcard src/**/*.c) $(wildcard src/*.c) 
+# makefile
+MAKEFLAGS = Rrqp
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+HOMEDRIVE = C:
+# automatic
+@F = $(notdir $@)
+# automatic
+^D = $(pats 
+ubst %/,%,$(dir $^))
+# makefile
+CURDIR := c:/dev/gui
+# default
+SHELL := C:/Program Files/Git/usr/bin/sh.exe
+# environment
+WINDIR = C:\WINDOWS
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
+# makefile (from `makefile', line 10)
+CFLAGS = -std=c11 -O3 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing -Wno-newline-eof -Wno-deprecated-declarations -Wno-unused-parameter -DDLL_BUILD -Iinclude -Ilib/cglm/include  -Ilib/stb  -Ilib/gaia/include -Ilib/freetype -Ilib/glad/include -Ilib/glfw/include
+# environment
+ONEDRIVE = C:\Users\fiffi\OneDrive
+# environment
+MSMPI_BIN = C:\Program Files\Microsoft MPI\Bin\
+# environment
+PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+# makefile (from `makefile', line 1)
+MAKEFILE_LIST :=  makefile
+# environment
+FPS_BROWSER_USER_PROFILE_STRING = Default
+# environment
+TMP = C:\Users\fiffi\AppData\Local\Temp
+# environment
+PROGRAMW6432 = C:\Program Files
+# environment
+PROGRAMDATA = C:\ProgramData
+# environment
+VSCODE_CWD = C:\dev\gui
+# environment
+PATH = C:\Program Files\Python310\Scripts\;C:\Program Files\Python310\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Users\fiffi\.jdks\openjdk-15.0.1\bin;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\dotnet\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Program Files (x86)\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin;D:\node_js\;C:\Program Files\Neovim\/bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Users\fiffi\.cargo\bin;C:\Users\fiffi\AppData\Local\Microsoft\WindowsApps;C:\Users\fiffi\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\fiffi\.jdks\openjdk-15.0.2\bin\java.exe;C:\MinGW\mingw64\bin;C:\Program Files (x86)\GnuWin32\bin;C:\Program Files\CMake\bin;C:\Program Files\LLVM\bin;C:\Program Files\Neovim\bin;C:\dev\Scripts;C:\Program Files\NASM;C: 
+\Users\fiffi\.dotnet\tools;F:\qemu;\\wsl$\Ubuntu-20.04\usr\local\i386elfgcc\bin;C:\Users\fiffi\AppData\Roaming\npm;C:\dev\bin;C:\Users\fiffi\.dotnet\tools;C:\Users\fiffi\.cargo\bin;
+# environment
+COMMONPROGRAMW6432 = C:\Program Files\Common Files
+# environment
+PROCESSOR_ARCHITECTURE = x86
+# environment
+USERPROFILE = C:\Users\fiffi
+# environment
+ALLUSERSPROFILE = C:\ProgramData
+# makefile (from `makefile', line 2)
+AR = ar -rcs
+# environment
+NUMBER_OF_PROCESSORS = 12
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# m 
+akefile (from `makefile', line 16)
+LDFLAGS = lib/cglm/libcglm.a lib/gaia/libgaia.lib lib/freetype/freetype.lib lib/glad/src/glad.o lib/glfw/libglfw3dll.a
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives
+# automatic
+%F = $(notdir $%)
+# environment
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_17000_FEDLFTYFCDZJENEH
+# environment
+COMPUTERNAME = DESKTOP-QETELMG
+# environment
+GOOGLE_API_KEY = no
+# environment
+PROGRAMFILES = C:\Program Files (x86)
+# environment
+DRIVERDATA = C:\Windows\System32\Drivers\DriverData
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+USERNAME = fiffi
+# environment
+PUBLIC = C:\Users\Public
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+GOOGLE_DEFAULT_CLIENT_ID = no
+# environment
+VSCODE_CODE_CACHE_PATH = C:\Users\fiffi\AppData\Roaming\Code\CachedData\da76f93349a72022ca4670c1b84860304616aaa2
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# environment
+COMMONPROGRAMFILES = C:\Program Files (x86)\Common Files
+# environment
+LOGONSERVER = \\DESKTOP-QETELMG
+# environment
+ONEDRIVECONSUMER = C:\Users\fiffi\OneDrive
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# environment
+USERDOMAIN = DESKTOP-QETELMG
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# makefile (from `makefile', line 1)
+CC = clang
+# default
+MAKE_VERSION := 3.81
+# makefile
+.DEFAULT_GOAL := static
+# environment
+GOOGLE_DEFAULT_CLIENT_SECRET = no
+# environment
+PROGRAMFILES(X86) = C:\Program Files (x86)
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+LOCALAPPDATA = C:\Users\fiffi\AppData\Local
+# environment
+PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules;C:\Program Files\Intel\Wired Networking\
+# default
+MAKE_COMMAND := make.exe
+# environment
+PROCESSOR_ARCHITEW6432 = AMD64
+# environment
+AMDRMSDKPATH = C:\Program Files\AMD\RyzenMasterSDK\
+# default
+.VARIABLES := 
+# automatic
+*F = $(notdir $*)
+# environment
+PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 1 Stepping 1, AuthenticAMD
+# environment
+OS = Windows_NT
+# environment
+VSCODE_IPC_HOOK = \\.\pipe\dc10a6b75e7d5a70afb7787613ac0858-1.70.0-main-sock
+# environment
+HOMEPATH = \Users\fiffi
+# environment
+COMMONPROGRAMFILES(X86) = C:\Program Files (x86)\Common Files
+# environment
+PROMPT = $P$G
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+SYSTEMROOT = C:\WINDOWS
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+APPDA 
+TA = C:\Users\fiffi\AppData\Roaming
+# environment
+TEMP = C:\Users\fiffi\AppData\Local\Temp
+# environment
+COMSPEC = C:\WINDOWS\system32\cmd.exe
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# environment
+LC_ALL = C
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# environment
+SYSTEMDRIVE = C:
+# environment
+SESSIONNAME = Console
+# environment
+PROCESSOR_REVISION = 0101
+# environment
+MAKELEVEL := 0
+# environment
+LANG = C
+# environment
+PROCESSOR_LEVEL = 23
+# environment
+FPS_BROWSER_APP_PROFILE_STRING = Internet Explorer
+# environment
+VSCODE_PID = 17000
+# environment
+USERDOMAIN_ROAMINGPROFILE = DESKTOP-QETELMG
+# variable set hash-table stats:
+# Load=95/1024=9%, Rehash=0, Collisions=12/140=9%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# src/internal.h (key c:/dev/gui/src/internal.h, mtime 1660047767): could not be opened.
+# src/gfx/vbo.c (key c:/dev/gui/src/gfx/vbo.c, mtime 1655916517): could not be opened.
+# src/gfx (key c:/dev/gui/src/gfx, mtime 1660052226): 7 files, no impossibilities.
+# src/components/renderer.c (key c:/dev/gui/src/components/renderer.c, mtime 1660051748): could not be opened.
+# src/gfx/vao.c (key c:/dev/gui/src/gfx/vao.c, mtime 1655913803): could not be opened.
+# C:\WINDOWS\System32\WindowsPowerShell\v1.0\ (key C:/WINDOWS/System32/WindowsPowerShell/v1.0/, mtime 1603067745): 34 files, no impossibilities.
+# C:\WINDOWS\System32\Wbem (key C:/WINDOWS/System32/Wbem, mtime 1657990144): 173 files, no impossibilities.
+# . (key c:/dev/gui, mtime 1660052166): 10 files, no impossibilities.
+# src/components/window.c (key c:/dev/gui/src/components/window.c, mtime 1660052112): could not be opened.
+# src/shader (key c:/dev/gui/src/shader, mtime 1655916021): 4 files, no impossibilities.
+# C:\Program Files\Git\mingw64\bin (key C:/Program Files/Git/mingw64/bin, mtime 1607125361): 107 files, no impossibilities.
+# src/shader/gui.fs (key c:/dev/gui/src/shader/gui.fs, mtime 1655916007): could not be opened.
+# C:\Program Files\dotnet\ (key C:/Program Files/dotn 
+et/, mtime 1655465581): 11 files, no impossibilities.
+# src/components/io.c (key c:/dev/gui/src/components/io.c, mtime 1660050151): could not be opened.
+# C:\Users\fiffi\.jdks\openjdk-15.0.1\bin (key C:/Users/fiffi/.jdks/openjdk-15.0.1/bin, mtime 1603281544): 124 files, no impossibilities.
+# C:\WINDOWS\System32\OpenSSH\: could not be stat'd.
+# C:\Program Files (x86)\Common Files\Oracle\Java\javapath (key C:/Program Files (x86)/Common Files/Oracle/Java/javapath, mtime 1624893219): 5 files, no impossibilities.
+# C:\Program Files\Python310\: could not be stat'd.
+# src/components/util.c (key c:/dev/gui/src/components/util.c, mtime 1660052046): could not be opened.
+# C:\WINDOWS (key C:/WINDOWS, mtime 1657990141): 134 files, no impossibilities.
+# C:\Program Files\Python310\Scripts\: could not be stat'd.
+# C:\Program Files\Git\usr\bin (key C:/Program Files/Git/usr/bin, mtime 1607125360): 315 files, no impossibilities so far.
+# src/components/widget.c (key c:/dev/gui/src/components/widget.c, mtime 1660052158): could not be opened.
+# src/components/context.c (key c:/dev/gui/src/components/context.c, mtime 1660052219): could not be opened.
+# src (key c:/dev/gui/src, mtime 1655225815): 6 files, no impossibilities.
+# src/gfx/camera.c (key c:/dev/gui/src/gfx/camera.c, mtime 1660052226): could not be opened.
+# src/components (key c:/dev/gui/src/components, mtime 1660052166): 9 files, no impossibilities.
+# src/shader/gui.vs (key c:/dev/gui/src/shader/gui.vs, mtime 1648327602): could not be opened.
+# C:\Program Files\Git\cmd (key C:/Program Files/Git/cmd, mtime 1607125361): 8 files, no impossibilities.
+# C:\WINDOWS\system32 (key C:/WINDOWS/system32, mtime 1659133205): 3195 files, no impossibilities.
+# src/gfx/shader.c (key c:/dev/gui/src/gfx/shader.c, mtime 1660052352): could not be opened.
+# src/gfx/texture.c (key c:/dev/gui/src/gfx/texture.c, mtime 1655902029): could not be opened.
+# src/components/font.c (key c:/dev/gui/src/components/font.c, mtime 1660047594): could not be opened.
+# C:\Program Files\NVIDIA Corporation\NVIDIA 
+ NvDLISR (key C:/Program Files/NVIDIA Corporation/NVIDIA NvDLISR, mtime 1543101946): 5 files, no impossibilities.
+
+# 4147 files, no impossibilities in 34 directories.
+
+# Implicit Rules
+
+%.o: %.c
+#  commands to execute (from `makefile', line 28):
+	$(CC) -o $@ -c $< $(CFLAGS)
+	
+
+# 1 implicit rules, 0 (0.0%) terminal.
+
+# Files
+
+# Not a target:
+all:
+#  Command-line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+src/components/util.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+src/components/widget.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+makefile:
+#  Implicit rule se 
+arch has been done.
+#  Last modified 2022-07-27 19:21:45
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+src/gfx/texture.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+src/gfx/vao.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+static: src/components/context.o src/components/font.o src/components/io.o src/components/renderer.o src/components/util.o src/components/widget.o src/components/window.o src/gfx/camera.o src/gfx/shader.o src/gfx/texture.o src/gfx/vao.o src/gfx/vbo.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 22):
+	$(AR) libgui.a $^ $(LDFLAGS)
+	
+
+# Not a target:
+src/components/io.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+src/gfx/shader.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+dynamic: src/components/context.o src/components/font.o src/components/io.o src/components/renderer.o src/components/util.o src/components/widget.o src/components/window.o src/gfx/camera.o src/gfx/shader.o src/gfx/texture.o src/gfx/vao.o src/gfx/vbo.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 25):
+	$(CC) -shared -o gui.dll $^ $(LDFLAGS)
+	
+
+# Not a target:
+src/components/font.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+src/gfx/vbo.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 31):
+	rm -rf $(OBJ) libgui.a gui.dll libgui.lib libgui.exp
+	
+
+# Not a target:
+src/components/context.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+src/gfx/camera.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+src/components/renderer.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+src/components/window.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=19/1024=2%, Rehash=0, Collisions=0/54=0%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) sea 
+make.exe: *** No rule to make target `all'.  Stop.
+
+rch path.
+
+# # of strings in strcache: 1
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
+
+# Finished Make data base on Tue Aug 09 15:39:57 2022
+
+ 
