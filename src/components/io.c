@@ -1,3 +1,4 @@
+#include "gui.h"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wgnu-statement-expression"
 
@@ -5,12 +6,12 @@
 
 #pragma GCC diagnostic pop
 
-GUI_API struct GuiIO *gui_io_init(GLFWwindow *window) {
+GUI_API struct GuiIO *gui_io_init(void *window) {
     struct GuiIO *io = ctx->io;
-    glfwSetCursorPosCallback(window, gui_io_cursor_callback);
-    glfwSetKeyCallback(window, gui_io_key_callback);
-    glfwSetMouseButtonCallback(window, gui_io_mouse_callback);
-    glfwSetFramebufferSizeCallback(window, gui_io_size_callback);
+    glfwSetCursorPosCallback(window, (GLFWcursorposfun)gui_io_cursor_callback);
+    glfwSetKeyCallback(window, (GLFWkeyfun)gui_io_key_callback);
+    glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)gui_io_mouse_callback);
+    glfwSetFramebufferSizeCallback(window, (GLFWframebuffersizefun)gui_io_size_callback);
     return io;
 }
 
@@ -20,7 +21,19 @@ GUI_API struct GuiIO *gui_io_get() {
     return io;
 }
 
-GUI_API void gui_io_key_callback(GLFWwindow *handle, int key, int scancode, int action, int mods) {
+GUI_API f32 gui_io_get_size_x() {
+    return ctx->io->window_size.x;
+}
+
+GUI_API f32 gui_io_get_size_y() {
+    return ctx->io->window_size.y;
+}
+
+GUI_API f64 gui_io_get_time() {
+    return ctx->time_passed;
+}
+
+GUI_API void gui_io_key_callback(void *handle, int key, int scancode, int action, int mods) {
     struct GuiIO *io = ctx->io;
     if(key < 0) {
         return;
@@ -38,7 +51,7 @@ GUI_API void gui_io_key_callback(GLFWwindow *handle, int key, int scancode, int 
     }
 }
 
-GUI_API void gui_io_cursor_callback(GLFWwindow *handle, double mx, double my) {
+GUI_API void gui_io_cursor_callback(void *handle, double mx, double my) {
     struct GuiIO *io = ctx->io;
     vec2s pos = {{mx, my}};
 
@@ -49,7 +62,7 @@ GUI_API void gui_io_cursor_callback(GLFWwindow *handle, double mx, double my) {
     io->mouse.position = pos;
 }
 
-GUI_API void gui_io_mouse_callback(GLFWwindow *handle, int button, int action, int mods) {
+GUI_API void gui_io_mouse_callback(void *handle, int button, int action, int mods) {
     struct GuiIO *io = ctx->io;
     if(button < 0) {
         return;
@@ -68,13 +81,13 @@ GUI_API void gui_io_mouse_callback(GLFWwindow *handle, int button, int action, i
     }
 }
 
-GUI_API void gui_io_size_callback(GLFWwindow *handle, int width, int height) {
+GUI_API void gui_io_size_callback(void *handle, int width, int height) {
     struct GuiIO *io = ctx->io;
     glViewport(0, 0, width, height);
     io->window_size = (vec2s) {{ width, height }};
 }
 
-GUI_API void gui_io_key_update() {
+void gui_io_key_update() {
     struct GuiIO *io = ctx->io;
 
     for(size_t i = 0; i < GLFW_MOUSE_BUTTON_LAST; i++) {

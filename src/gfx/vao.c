@@ -1,16 +1,16 @@
 #include "./../internal.h"
 
-GUI_API GuiVAO gui_vao_create() {
+GuiVAO gui_vao_create() {
     GuiVAO self = {0};
     glGenVertexArrays(1, &self.handle);
     return self;
 }
 
-GUI_API void gui_vao_bind(GuiVAO self) {
+void gui_vao_bind(GuiVAO self) {
     glBindVertexArray(self.handle);
 }
 
-GUI_API void gui_vao_attr(GuiVAO vao, GuiVBO vbo, GLuint index, GLuint size, GLenum type, GLsizei stride, size_t offset) {
+void gui_vao_attr(GuiVAO vao, GuiVBO vbo, GLuint index, GLuint size, GLenum type, GLsizei stride, size_t offset) {
     gui_vao_bind(vao);
     gui_vbo_bind(vbo);
     switch (type) {
@@ -31,6 +31,6 @@ GUI_API void gui_vao_attr(GuiVAO vao, GuiVBO vbo, GLuint index, GLuint size, GLe
     glEnableVertexAttribArray(index);
 }
 
-GUI_API void gui_vao_destroy(GuiVAO self) {
+void gui_vao_destroy(GuiVAO self) {
 
 }

@@ -1,6 +1,6 @@
 #include "./../internal.h"
 
-GUI_API struct GuiFont *gui_font_init(const char *path, u32 size) {
+struct GuiFont *gui_font_init(const char *path, u32 size) {
     struct GuiFont *self = malloc(sizeof(struct GuiFont));
     self->chars = gaia_array_create(struct GuiChar, 96);
 

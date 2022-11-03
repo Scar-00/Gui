@@ -3,7 +3,7 @@
 
 #include "./../internal.h"
 
-GUI_API void gui_texture_pixels_load(const char *path, u8 **pixels_out, u32 *width_out, u32 *height_out) {
+void gui_texture_pixels_load(const char *path, u8 **pixels_out, u32 *width_out, u32 *height_out) {
     s32 width, height, channels;
 
     stbi_set_flip_vertically_on_load(true);
@@ -18,7 +18,7 @@ GUI_API void gui_texture_pixels_load(const char *path, u8 **pixels_out, u32 *wid
     stbi_image_free(image);
 }
 
-GUI_API struct GuiTexture gui_texture_from_pixels(u8 *pixels, u32 width, u32 height) {
+struct GuiTexture gui_texture_from_pixels(u8 *pixels, u32 width, u32 height) {
     struct GuiTexture self = {
         .size = (vec2s) {{ width, height }}
     };
@@ -35,7 +35,7 @@ GUI_API struct GuiTexture gui_texture_from_pixels(u8 *pixels, u32 width, u32 hei
     return self;
 }
 
-GUI_API struct GuiTexture gui_texture_from_font(u8 *pixels, u32 width, u32 height) {
+struct GuiTexture gui_texture_from_font(u8 *pixels, u32 width, u32 height) {
     struct GuiTexture self = {
         .size = (vec2s) {{ width, height }}
     };
@@ -57,7 +57,7 @@ GUI_API struct GuiTexture gui_texture_from_font(u8 *pixels, u32 width, u32 heigh
     return self;
 }
 
-GUI_API struct GuiTexture gui_texture_from_path(const char *path) {
+struct GuiTexture gui_texture_from_path(const char *path) {
     u8* pixels;
     u32 width, height;
     gui_texture_pixels_load(path, &pixels, &width, &height);
@@ -66,10 +66,10 @@ GUI_API struct GuiTexture gui_texture_from_path(const char *path) {
     return self;
 }
 
-GUI_API void gui_texture_destroy(struct GuiTexture self) {
+void gui_texture_destroy(struct GuiTexture self) {
     glDeleteTextures(1, &self.handle);
 }
 
-GUI_API void gui_texture_bind(struct GuiTexture self) {
+void gui_texture_bind(struct GuiTexture self) {
     glBindTexture(GL_TEXTURE_2D, self.handle);
 }

@@ -1,6 +1,8 @@
 #include "./../internal.h"
+#include "glad/glad.h"
+#include <float.h>
 
-GUI_API struct GuiDrawList *gui_draw_list_create() {
+struct GuiDrawList *gui_draw_list_create() {
     struct GuiDrawList *self = calloc(1, sizeof(struct GuiDrawList));
     *self = (struct GuiDrawList) {
         .vertex_buffer = gaia_array_create(f32, 4000),
@@ -9,7 +11,7 @@ GUI_API struct GuiDrawList *gui_draw_list_create() {
     return self;
 }
 
-GUI_API void gui_window_bring_to_front(struct GuiWindow *window) {
+void gui_window_bring_to_front(struct GuiWindow *window) {
     struct GuiRenderingData *data = &ctx->rendering_data;
     s32 index = window->tmp_data.draw_index;
 
@@ -34,11 +36,12 @@ GUI_API void gui_renderer_data_init() {
         .ibo = gui_vbo_create(GL_ELEMENT_ARRAY_BUFFER, true),
         .shader = gui_shader_create("C:\\Users\\fiffi\\OneDrive\\Desktop\\tmp\\windows\\libs\\gui\\src\\shader\\gui.vs", "C:\\Users\\fiffi\\OneDrive\\Desktop\\tmp\\windows\\libs\\gui\\src\\shader\\gui.fs"),
         .camera = gui_camera_init((vec2s){{0, 0}}, ctx->io->window_size),
+        //.view_port = gui_viewport_init((vec2s){{0, 0}}, ctx->io->window_size),
     };
 
     data->redering_order = gaia_array_create(struct GuiWindow *, 10);
     data->texture_count = 0;
-    
+
     gui_shader_bind(data->shader);
 
     blank = gui_texture_from_path("C:\\Users\\fiffi\\OneDrive\\Desktop\\tmp\\windows\\libs\\gui\\src\\shader\\button.png");
@@ -57,12 +60,13 @@ GUI_API void gui_render_begin() {
 }
 
 static void gui_render_clear() {
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    glClear(/*GL_DEPTH_BUFFER_BIT |*/ GL_COLOR_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_SCISSOR_TEST);
 
     gui_camera_update(&ctx->rendering_data.camera);
 }
@@ -70,12 +74,13 @@ static void gui_render_clear() {
 static void gui_render_prep() {
     gui_render_clear();
     struct GuiContext *g = ctx;
+    //GLuint *framebuffer = gaia_array_create(GLuint, gaia_array_length(g->rendering_data.redering_order));
     for(u32 i = 0; i < gaia_array_length(g->rendering_data.redering_order); i++) {
         struct GuiDrawList *draw_data = g->rendering_data.redering_order[i]->tmp_data.draw_list;
         u32 index_count = gaia_array_length(draw_data->index_buffer);
         gaia_array_length(draw_data->index_buffer) = 0;
         size_t offset = 0;
-        for(u32 i = 0; i < index_count; i += 6) {
+        for(u32 j = 0; j < index_count; j += 6) {
             gaia_array_pushback(draw_data->index_buffer, offset + 3);
             gaia_array_pushback(draw_data->index_buffer, offset + 0);
             gaia_array_pushback(draw_data->index_buffer, offset + 1);
@@ -93,8 +98,8 @@ static void gui_render_prep() {
         gui_shader_uniform_mat4(data->shader, "m", glms_mat4_identity());
         //binding textures
         gui_shader_uniform_textures2D(data->shader, "textures");
-        for(size_t i = 0; i < 32; i++)
-            glBindTextureUnit(i, data->textures[i].handle);
+        for(size_t b = 0; b < 32; b++)
+            glBindTextureUnit(b, data->textures[b].handle);
 
         gui_vbo_buffer(data->vbo, draw_data->vertex_buffer, 0, gaia_array_length(draw_data->vertex_buffer) * sizeof(f32));
         gui_vbo_buffer(data->ibo, draw_data->index_buffer, 0, gaia_array_length(draw_data->index_buffer) * sizeof(u32));
@@ -106,8 +111,11 @@ static void gui_render_prep() {
 
         gui_vao_bind(data->vao);
         gui_vbo_bind(data->ibo);
-        glDrawElements(GL_TRIANGLES, gaia_array_length(draw_data->index_buffer), GL_UNSIGNED_INT, (void *) 0); 
+        GuiWindow *window = g->rendering_data.redering_order[i];
+        glScissor(window->pos.x, window->pos.y, window->size.x + 17, window->size.y + 17);
+        glDrawElements(GL_TRIANGLES, gaia_array_length(draw_data->index_buffer), GL_UNSIGNED_INT, (void *) 0);
     }
+    glScissor(0, 0, g->io->window_size.x, g->io->window_size.y);
 }
 
 GUI_API void gui_render() {
@@ -122,6 +130,7 @@ GUI_API void gui_shutdown() {
         free(g->windows[i]->tmp_data.draw_list);
         free(g->windows[i]);
     }
+
     gaia_array_destroy(g->windows);
     gaia_array_destroy(g->popups);
     gaia_array_destroy(g->font->chars);
@@ -131,14 +140,14 @@ GUI_API void gui_shutdown() {
     free(g);
 }
 
-GUI_API void gui_box_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s color, struct GuiTexture tex) {
+void gui_box_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s color, struct GuiTexture tex) {
     struct GuiRenderingData *data = &ctx->rendering_data;
 
     f32 tex_index = -1;
     for(size_t i = 0; i < 32; i++) {
         if(data->textures[i].handle == tex.handle) {
             tex_index = i;
-        } 
+        }
     }
 
     if(tex_index == -1) {
@@ -161,9 +170,9 @@ GUI_API void gui_box_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, v
     gaia_array_length(draw_list->index_buffer) += 6;
 }
 
-GUI_API void gui_text_add(struct GuiDrawList *draw_list, vec2s pos, f32 scale, const char *format) {
+void gui_text_add(struct GuiDrawList *draw_list, vec2s pos, f32 scale, const char *format) {
     struct GuiRenderingData *data = &ctx->rendering_data;
-    struct GuiFont *font = ctx->font; 
+    struct GuiFont *font = ctx->font;
     struct GuiTexture tex = font->atlas;
 
     f32 tex_index = -1;
@@ -183,11 +192,15 @@ GUI_API void gui_text_add(struct GuiDrawList *draw_list, vec2s pos, f32 scale, c
     for(size_t i = 0; i < string_len; i++) {
         u32 index = format[i] - 32;
 
+        if(index == '\n') {
+            continue;
+        }
+
         struct GuiChar c = font->chars[index];
 
         vec2s e_pox = {{
             pos.x + c.bearing.x * scale,
-            pos.y - (c.size.y - c.bearing.y) * scale 
+            pos.y - (c.size.y - c.bearing.y) * scale
         }};
 
         vec2s size = {{c.size.x * scale, c.size.y * scale}};
@@ -208,7 +221,7 @@ GUI_API void gui_text_add(struct GuiDrawList *draw_list, vec2s pos, f32 scale, c
     }
 }
 
-GUI_API void gui_rect_add(struct GuiDrawList *draw_list, struct GuiRect bb, vec4s color) {
+void gui_rect_add(struct GuiDrawList *draw_list, struct GuiRect bb, vec4s color) {
     vec2s pos = bb.min;
     vec2s size = {{bb.max.x - bb.min.x, bb.max.y - bb.min.y}};
 
@@ -216,4 +229,51 @@ GUI_API void gui_rect_add(struct GuiDrawList *draw_list, struct GuiRect bb, vec4
     gui_box_add(draw_list, pos, (vec2s){{size.x, 1}}, color, blank);
     gui_box_add(draw_list, (vec2s){{pos.x, pos.y + size.y}}, (vec2s){{size.x, 1}}, color, blank);
     gui_box_add(draw_list, (vec2s){{pos.x + size.x, pos.y}}, (vec2s){{1, size.y}}, color, blank);
+}
+
+void gui_triangle_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s color, GuiTrangleSide side) {
+    struct GuiRenderingData *data = &ctx->rendering_data;
+    GuiTexture tex = blank;
+
+    f32 tex_index = -1;
+    for(size_t i = 0; i < 32; i++) {
+        if(data->textures[i].handle == tex.handle) {
+            tex_index = i;
+        }
+    }
+
+    if(tex_index == -1) {
+        tex_index = data->texture_count;
+        data->textures[(int)data->texture_count] = tex;
+        data->texture_count++;
+    }
+
+    f32 vertecies[] = {
+        //x                 y             z  uv_mi|uv_ma
+        pos.x           , pos.y         , 0, 0.0f, 0.0f, tex_index, color.x, color.y, color.z, color.w,
+        pos.x           , pos.y + size.y, 0, 0.0f, 1.0f, tex_index, color.x, color.y, color.z, color.w,
+        pos.x + size.x  , pos.y + size.y, 0, 1.0f, 1.0f, tex_index, color.x, color.y, color.z, color.w,
+        pos.x + size.x  , pos.y         , 0, 1.0f, 0.0f, tex_index, color.x, color.y, color.z, color.w,
+    };
+
+    switch (side) {
+        case GUI_TRIANGLE_CORNER_TOP_L:
+        vertecies[30] = pos.x;
+        break;
+        case GUI_TRIANGLE_CORNER_TOP_R:
+        vertecies[0] = pos.x + size.x;
+        break;
+        case GUI_TRIANGLE_CORNER_BOTTOM_L:
+        vertecies[21] = pos.y;
+        break;
+        case GUI_TRIANGLE_CORNER_BOTTOM_R:
+        vertecies[11] = pos.y;
+        break;
+    }
+
+    //indicies: {3, 0, 1, 3, 1, 2}
+    for(u32 i = 0; i < 40; i++) {
+        gaia_array_pushback(draw_list->vertex_buffer, vertecies[i]);
+    }
+    gaia_array_length(draw_list->index_buffer) += 6;
 }
