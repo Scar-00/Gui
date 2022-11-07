@@ -32,8 +32,8 @@ GUI_API bool gui_context_create() {
         .state = 0,
         .io = calloc(1, sizeof(struct GuiIO)),
     };
-    //ctx->io->window_size = (vec2s){{1280, 720}};
-    ctx->io->window_size = (vec2s){{1920, 1080}};
+    ctx->io->window_size = (vec2s){{1280, 720}};
+    //ctx->io->window_size = (vec2s){{1920, 1080}};
     // arrows[ARROW_RIGHT] = gui_texture_from_path("res/images/right.png");
     // arrows[ARROW_DOWN] = gui_texture_from_path("res/images/down.png");
     return true;

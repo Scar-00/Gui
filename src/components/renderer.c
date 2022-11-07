@@ -73,19 +73,18 @@ static void gui_render_clear() {
 static void gui_render_prep() {
     gui_render_clear();
     struct GuiContext *g = ctx;
-    //GLuint *framebuffer = gaia_array_create(GLuint, gaia_array_length(g->rendering_data.redering_order));
     for(u32 i = 0; i < gaia_array_length(g->rendering_data.redering_order); i++) {
         struct GuiDrawList *draw_data = g->rendering_data.redering_order[i]->tmp_data.draw_list;
         u32 index_count = gaia_array_length(draw_data->index_buffer);
         gaia_array_length(draw_data->index_buffer) = 0;
         size_t offset = 0;
         for(u32 j = 0; j < index_count; j += 6) {
-            gaia_array_pushback(draw_data->index_buffer, offset + 3);
             gaia_array_pushback(draw_data->index_buffer, offset + 0);
             gaia_array_pushback(draw_data->index_buffer, offset + 1);
-            gaia_array_pushback(draw_data->index_buffer, offset + 3);
-            gaia_array_pushback(draw_data->index_buffer, offset + 1);
             gaia_array_pushback(draw_data->index_buffer, offset + 2);
+            gaia_array_pushback(draw_data->index_buffer, offset + 2);
+            gaia_array_pushback(draw_data->index_buffer, offset + 3);
+            gaia_array_pushback(draw_data->index_buffer, offset + 0);
             offset += 4;
         }
 
@@ -139,33 +138,61 @@ GUI_API void gui_shutdown() {
     free(g);
 }
 
-void gui_box_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s color, struct GuiTexture tex) {
+static vec4s QUAD_VERTEX_POS[4] = {
+        {{ 0.0,  0.0, 0, 1}},
+        {{ 1.0,  0.0, 0, 1}},
+        {{ 1.0,  1.0, 0, 1}},
+        {{ 0.0,  1.0, 0, 1}}
+    };
+
+static vec2s QUAD_UV_CORDS[4] = {
+        {{0, 0}},
+        {{1, 0}},
+        {{1, 1}},
+        {{0, 1}}
+    };
+
+static f32 gui_check_texture(struct GuiTexture *tex) {
     struct GuiRenderingData *data = &ctx->rendering_data;
 
     f32 tex_index = -1;
     for(size_t i = 0; i < 32; i++) {
-        if(data->textures[i].handle == tex.handle) {
+        if(data->textures[i].handle == tex->handle) {
             tex_index = i;
         }
     }
 
     if(tex_index == -1) {
         tex_index = data->texture_count;
-        data->textures[(int)data->texture_count] = tex;
+        data->textures[(int)data->texture_count] = *tex;
         data->texture_count++;
     }
 
-    f32 vertecies[] = {
-        //x                 y             z  uv_mi|uv_ma
-        pos.x           , pos.y         , 0, 0.0f, 0.0f, tex_index, color.x, color.y, color.z, color.w,
-        pos.x           , pos.y + size.y, 0, 0.0f, 1.0f, tex_index, color.x, color.y, color.z, color.w,
-        pos.x + size.x  , pos.y + size.y, 0, 1.0f, 1.0f, tex_index, color.x, color.y, color.z, color.w,
-        pos.x + size.x  , pos.y         , 0, 1.0f, 0.0f, tex_index, color.x, color.y, color.z, color.w,
-    };
+    return tex_index;
+}
 
-    for(u32 i = 0; i < 40; i++) {
-        gaia_array_pushback(draw_list->vertex_buffer, vertecies[i]);
+void gui_box_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s color, struct GuiTexture tex) {
+    f32 tex_index = gui_check_texture(&tex);
+
+    mat4s transform = glms_mat4_mul(
+                                    glms_translate(glms_mat4_identity(), (vec3s){{pos.x, pos.y, 0}}),
+                                    glms_scale(glms_mat4_identity(), (vec3s){{size.x, size.y, 0}})
+                                    );
+
+    for(u32 i = 0; i < 4; i++) {
+        vec4s pos = glms_mat4_mulv(transform, QUAD_VERTEX_POS[i]);
+        gaia_array_pushback(draw_list->vertex_buffer, pos.x);
+        gaia_array_pushback(draw_list->vertex_buffer, pos.y);
+        gaia_array_pushback(draw_list->vertex_buffer, pos.z);
+        gaia_array_pushback(draw_list->vertex_buffer, QUAD_UV_CORDS[i].x);
+        gaia_array_pushback(draw_list->vertex_buffer, QUAD_UV_CORDS[i].y);
+        gaia_array_pushback(draw_list->vertex_buffer, tex_index);
+        gaia_array_pushback(draw_list->vertex_buffer, color.x);
+        gaia_array_pushback(draw_list->vertex_buffer, color.y);
+        gaia_array_pushback(draw_list->vertex_buffer, color.z);
+        gaia_array_pushback(draw_list->vertex_buffer, color.w);
     }
+
     gaia_array_length(draw_list->index_buffer) += 6;
 }
 
@@ -227,7 +254,7 @@ void gui_rect_add(struct GuiDrawList *draw_list, struct GuiRect bb, vec4s color)
     gui_box_add(draw_list, pos, (vec2s){{1, size.y}}, color, blank); //
     gui_box_add(draw_list, pos, (vec2s){{size.x, 1}}, color, blank);
     gui_box_add(draw_list, (vec2s){{pos.x, pos.y + size.y}}, (vec2s){{size.x, 1}}, color, blank);
-    gui_box_add(draw_list, (vec2s){{pos.x + size.x, pos.y}}, (vec2s){{1, size.y}}, color, blank);
+    gui_box_add(draw_list, (vec2s){{pos.x + size.x, pos.y}}, (vec2s){{1, size.y + 1}}, color, blank);
 }
 
 void gui_triangle_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s color, GuiTrangleSide side) {
