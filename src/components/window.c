@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-//GUI_API bool gui_begin(const char *name, vec2s pos, vec2s size, bool *open)
 GUI_API bool gui_begin(const char *name, f32 x, f32 y, f32 width, f32 height, bool *open){
     struct GuiContext *g = ctx;
     struct GuiWindow *window = gui_window_get(name);
@@ -40,9 +39,6 @@ GUI_API bool gui_begin(const char *name, f32 x, f32 y, f32 width, f32 height, bo
 
     if(window->has_button && *open == false)
         return false;
-
-    // if(window->flags.is_popup)
-    //     window->pos = pos;
 
     if((window->flags & GUI_WINDOW_NO_PADDING) == GUI_WINDOW_NO_PADDING)
         window->padding = (vec2s){{0, 0}};
@@ -98,12 +94,6 @@ GUI_API void gui_end() {
 
 GUI_API void gui_window_set_size(f32 width, f32 height) {
     gui_window_current()->size = (vec2s){{width, height}};
-}
-
-GUI_API void gui_window_interaction_register(const char *name, IntFunc func, void *args) {
-    struct GuiWindow *window = gui_window_current();
-    assert(window->interactions_count < WINDOW_MAX_INTERACTIONS && "maximum number of window interactions reached(see WINDOW_MAX_INTERACTIONS)");
-    window->interactions[window->interactions_count++] = (struct GuiWindowInteraction){.name = gaia_string_init(name), .fn = func, .args = args};
 }
 
 GUI_API void gui_window_flag_set(struct GuiWindow *window, GuiWindowFlags flag) {
@@ -259,8 +249,6 @@ void gui_window_update(struct GuiWindow *window, bool just_created) {
     bool clickable = true;
 
     // FIXME:[Code duplication -> gui_is_clickable()]
-    // maybe this does now work properly <- look
-    // child windows(popups) are not checked by other windows
     for(size_t i = 0; i < window->tmp_data.child_windows_count; i++) {
         if(gui_widget_hovererd(window->tmp_data.bb) && gui_widget_hovererd(window->tmp_data.child_windows[i]->tmp_data.bb))
             clickable = false;
@@ -300,7 +288,7 @@ void gui_window_update(struct GuiWindow *window, bool just_created) {
 void gui_window_render_tile_bar(struct GuiWindow *window, struct GuiRect bb, const char *name, bool *open) {
     struct GuiContext *g = ctx;
     const bool has_close_button = (open != NULL);
-    vec2s close_button_pos;
+    vec2s close_button_pos = {0};
     vec4s color = rgb2vec4(10, 10, 10);
 
     if(g->window_active == window)
@@ -310,13 +298,11 @@ void gui_window_render_tile_bar(struct GuiWindow *window, struct GuiRect bb, con
     if(name)
         gui_text_add(window->tmp_data.draw_list, (vec2s){{ bb.min.x + 2, bb.min.y + 4}}, 1, name);
 
-    if(has_close_button){
+    if(has_close_button) {
         close_button_pos = (vec2s) {{ bb.max.x - 13, bb.min.y + 2 }};
-    }
-
-    if(has_close_button)
         if(gui_close_button(close_button_pos))
             *open = false;
+    }
 }
 
 void gui_window_cursor_advance() {

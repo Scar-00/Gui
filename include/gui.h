@@ -18,13 +18,16 @@
 // call the begin of rendering
 // gui_render_begin
 //
+// -----begin gui code-----
 //
 //
-// must to be called at the end of every frame
-// gui_frame_new()
+// ------end gui code------
 //
 // call at the end of rendering(expects orhographic projection)
 // gui_render();
+//
+// must to be called at the end of every frame
+// gui_frame_new()
 //
 // clean up
 // gui_shutdown();
@@ -111,6 +114,8 @@ GUI_API struct GuiIO *gui_io_get();
 GUI_API f32 gui_io_get_size_x();
 GUI_API f32 gui_io_get_size_y();
 GUI_API f64 gui_io_get_time();
+GUI_API f32 gui_io_get_mouse_x();
+GUI_API f32 gui_io_get_mouse_y();
 GUI_API void gui_io_key_callback(void *handle, int key, int scancode, int action, int mods);
 GUI_API void gui_io_cursor_callback(void *handle, double mx, double my);
 GUI_API void gui_io_mouse_callback(void *handle, int button, int action, int mods);
@@ -127,12 +132,9 @@ GUI_API void gui_viewport_begin(u32 x, u32 y, u32 width, u32 height);
 GUI_API void gui_viewport_end();
 
 //windows
-typedef void (*IntFunc)(void *args);
-//GUI_API bool gui_begin(const char *name, vec2s pos, vec2s size, bool *open);
 GUI_API bool gui_begin(const char *name, f32 x, f32 y, f32 width, f32 height, bool *open);
 GUI_API void gui_end();
 GUI_API void gui_window_set_size(f32 width, f32 height);
-GUI_API void gui_window_interaction_register(const char *name, IntFunc func, void *args);
 GUI_API void gui_window_flag_set(struct GuiWindow *window, GuiWindowFlags flag);
 GUI_API void gui_window_flag_clear(struct GuiWindow *window, GuiWindowFlags flag);
 GUI_API bool gui_window_flag_check(struct GuiWindow *window, GuiWindowFlags flag);

@@ -1,6 +1,7 @@
 #include <time.h>
 
 #include "./../internal.h"
+#include "glad/glad.h"
 
 GUI_API void gui_panic_handler_set(error_handler handler) {
     struct GuiContext *g = ctx;
@@ -123,4 +124,5 @@ GUI_API void gui_test() {
     window->tmp_data.cursor_start_pos.y += 20;
     window->tmp_data.cursor_pos.y += 20;
     */
+    glViewport(0, 0, ctx->io->window_size.x, ctx->io->window_size.y);
 }

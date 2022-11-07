@@ -371,7 +371,7 @@ GUI_API bool gui_slider_f32(const char *name, f32 *value, f32 lower, f32 upper) 
 
     f32 slider_value = ((*value - lower) / (upper - lower)) * SLIDER_LEN;
     vec2s slider_pos = {{ data.pos.x + slider_value, data.pos.y + 2 }};
-    slider_pos.x = clamp(slider_pos.x, data.pos.x + 8, data.pos.x + SLIDER_LEN - 12);
+    slider_pos.x = clamp(slider_pos.x, data.pos.x + 4, data.pos.x + SLIDER_LEN - 8);
 
     bool hovered = false;
     gui_button_behavior(data.bb, &hovered);
@@ -550,21 +550,20 @@ GUI_API bool gui_menu_begin(const char *label, ...) {
     }
 
     bool hovered = false;
-    bool button_clicked = gui_button_behavior(data.bb, &hovered);
+    gui_button_behavior(data.bb, &hovered);
 
     struct GuiWindow *menu_window = gui_window_get(label);
     bool menu_just_created = (menu_window == NULL);
     if(menu_just_created) {
-        GuiMenuFlags flags = GUI_MENU_FLAG_NONE;
+        GuiMenuFlags flags = GUI_MENU_NONE;
         gaia_array_pushback(window->tmp_data.menus, ((GuiMenu){.label = str, .id = menu_window->id, .flags = flags}));
         return false;
     }
 
 
-
     GuiMenu *menu = gui_menu_get(menu_window->id);
 
-    if(hovered || FLAG_CHECK(menu->flags, GUI_MENU_FLAG_ACTIVE))
+    if(hovered || FLAG_CHECK(menu->flags, GUI_MENU_ACTIVE))
         gui_box_add(window->tmp_data.draw_list, data.pos, data.size, rgb2vec4(255, 99, 226), blank);
 
     gui_text_add(window->tmp_data.draw_list, (vec2s){{data.pos.x + 2, data.pos.y + data.size.y / 4}}, 1, str.c_str);
@@ -629,7 +628,6 @@ GUI_API bool gui_tree_begin(char const *label) {
     GuiTree tree = {
         .name = str,
         .size = 0,
-        //.depth = (gui_tree_current() != NULL ? gui_tree_current()->depth + 1 : 0),
         .pos = {{0, 0}},
         .depth = depth,
     };
@@ -662,12 +660,4 @@ GUI_API void gui_tree_end() {
     }
 
     gaia_array_length(window->tmp_data.trees)--;
-
-    gui_widget_data_get(gaia_string_init(""));
-
-    GuiTree *curr = gui_tree_current();
-    if(curr) {
-        printf("curr -> %s\n", curr->name.c_str);
-        curr->size += tree->size;
-    }
 }

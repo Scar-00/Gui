@@ -32,7 +32,8 @@ GUI_API bool gui_context_create() {
         .state = 0,
         .io = calloc(1, sizeof(struct GuiIO)),
     };
-    ctx->io->window_size = (vec2s){{1280, 720}};
+    //ctx->io->window_size = (vec2s){{1280, 720}};
+    ctx->io->window_size = (vec2s){{1920, 1080}};
     // arrows[ARROW_RIGHT] = gui_texture_from_path("res/images/right.png");
     // arrows[ARROW_DOWN] = gui_texture_from_path("res/images/down.png");
     return true;
@@ -42,32 +43,11 @@ GUI_API struct GuiContext *gui_context_get() {
     return ctx;
 }
 
-static void gui_handle_predefined_elements() {
+/*static void gui_handle_predefined_elements() {
     struct GuiContext *g = ctx;
     struct GuiIO *io = ctx->io;
     struct GuiWindow *window = g->window_active;
-
-    if(window->interactions_count > 0) {
-        if(window->flags & GUI_WINDOW_IS_POPUP) {
-            window = gui_popup_get(window->id)->parent_window;
-        }
-
-        String name = gaia_string_init("%s_interactions", window->name.c_str);
-        struct GuiRect tile_bar_bb = (struct GuiRect){(vec2s){{window->pos.x, window->pos.y + window->size.y}}, glms_vec2_add(window->pos, (vec2s){{window->size.x, window->size.y + 16}})};
-        if(gui_widget_hovererd(tile_bar_bb) && io->mouse.buttons[GLFW_MOUSE_BUTTON_2].down) {
-            gui_popup_open(name.c_str);
-        }
-
-        if(gui_popup_begin(name.c_str)) {
-            for(u32 i = 0; i < window->interactions_count; i++) {
-                if(gui_button(window->interactions[i].name.c_str)) {
-                    window->interactions[i].fn(window->interactions[i].args);
-                }
-            }
-            gui_popup_end();
-        }
-    }
-}
+}*/
 
 GUI_API void gui_frame_new() {
     struct GuiContext *g = ctx;

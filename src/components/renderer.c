@@ -36,7 +36,6 @@ GUI_API void gui_renderer_data_init() {
         .ibo = gui_vbo_create(GL_ELEMENT_ARRAY_BUFFER, true),
         .shader = gui_shader_create("C:\\Users\\fiffi\\OneDrive\\Desktop\\tmp\\windows\\libs\\gui\\src\\shader\\gui.vs", "C:\\Users\\fiffi\\OneDrive\\Desktop\\tmp\\windows\\libs\\gui\\src\\shader\\gui.fs"),
         .camera = gui_camera_init((vec2s){{0, 0}}, ctx->io->window_size),
-        //.view_port = gui_viewport_init((vec2s){{0, 0}}, ctx->io->window_size),
     };
 
     data->redering_order = gaia_array_create(struct GuiWindow *, 10);
@@ -225,7 +224,7 @@ void gui_rect_add(struct GuiDrawList *draw_list, struct GuiRect bb, vec4s color)
     vec2s pos = bb.min;
     vec2s size = {{bb.max.x - bb.min.x, bb.max.y - bb.min.y}};
 
-    gui_box_add(draw_list, pos, (vec2s){{1, size.y}}, color, blank);
+    gui_box_add(draw_list, pos, (vec2s){{1, size.y}}, color, blank); //
     gui_box_add(draw_list, pos, (vec2s){{size.x, 1}}, color, blank);
     gui_box_add(draw_list, (vec2s){{pos.x, pos.y + size.y}}, (vec2s){{size.x, 1}}, color, blank);
     gui_box_add(draw_list, (vec2s){{pos.x + size.x, pos.y}}, (vec2s){{1, size.y}}, color, blank);

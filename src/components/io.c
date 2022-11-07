@@ -33,6 +33,14 @@ GUI_API f64 gui_io_get_time() {
     return ctx->time_passed;
 }
 
+GUI_API f32 gui_io_get_mouse_x() {
+    return ctx->io->mouse.position.x;
+}
+
+GUI_API f32 gui_io_get_mouse_y() {
+    return ctx->io->mouse.position.y;
+}
+
 GUI_API void gui_io_key_callback(void *handle, int key, int scancode, int action, int mods) {
     struct GuiIO *io = ctx->io;
     if(key < 0) {

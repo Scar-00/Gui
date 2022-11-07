@@ -162,14 +162,6 @@ typedef struct GuiItem {
     GuiItemFlags flags;
 }GuiItem;
 
-//TODO: maybe remove this hard cap ?
-#define WINDOW_MAX_INTERACTIONS 6
-typedef struct GuiWindowInteraction {
-    String name;
-    void *args;
-    IntFunc fn;
-}GuiWindowInteraction;
-
 #define WINDOW_MAX_CHILDREN 6
 typedef struct WTmpData {
     vec2s cursor_start_pos;
@@ -187,16 +179,6 @@ typedef struct WTmpData {
     struct GuiDrawList *draw_list;
 }WTmpData;
 
-typedef enum GuiComonentType {
-    GUI_MAIN_MENU,
-
-}GuiComonentType;
-
-typedef struct GuiComonentData {
-    GuiComonentType type;
-    GuiId id;
-}GuiComonentData;
-
 typedef struct GuiWindow {
     String name;
     vec2s pos;
@@ -206,8 +188,6 @@ typedef struct GuiWindow {
     bool has_button;
     bool visible;
     vec2s padding;
-    struct GuiWindowInteraction interactions[WINDOW_MAX_INTERACTIONS];
-    u32 interactions_count;
     s32 scroll;
     GuiWindowFlags flags;
 }GuiWindow;
@@ -222,9 +202,9 @@ typedef struct GuiPopup {
 
 typedef u32 GuiMenuFlags;
 typedef enum GuiMenuFlags_ {
-    GUI_MENU_FLAG_NONE = 0,
-    GUI_MENU_FLAG_ACTIVE = BIT(1),
-    GUI_MENU_FLAG_SHOULD_CLOSE = BIT(2),
+    GUI_MENU_NONE = 0,
+    GUI_MENU_ACTIVE = BIT(1),
+    GUI_MENU_SHOULD_CLOSE = BIT(2),
 }GuiMenuFlags_;
 
 typedef struct GuiMenu {
@@ -391,7 +371,6 @@ void gui_window_cursor_advance();
 bool gui_is_clickable();
 void gui_window_child_push(struct GuiWindow *window, struct GuiWindow *window_child);
 struct GuiWindow *gui_window_child_pop(struct GuiWindow *window);
-GUI_API bool gui_window_attach_component(struct GuiComonentData data);
 
 //widgets
 struct GuiItem gui_widget_data_get(String name);
