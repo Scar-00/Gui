@@ -14,7 +14,7 @@ GUI_API bool gui_begin(const char *name, f32 x, f32 y, f32 width, f32 height, bo
     struct GuiContext *g = ctx;
     struct GuiWindow *window = gui_window_get(name);
 
-    if(open != NULL && (*open) == false) {
+    if(open && (*open) == false) {
         if(window) {
             gui_window_remove(window);
         }
@@ -63,14 +63,14 @@ GUI_API bool gui_begin(const char *name, f32 x, f32 y, f32 width, f32 height, bo
     if(!((window->flags & GUI_WINDOW_NO_BORDER) == GUI_WINDOW_NO_BORDER))
         gui_rect_add(window->tmp_data.draw_list, window->tmp_data.bb, rgb2vec4(115, 140, 153));
 
-    /*(if(FLAG_CHECK(window->flags, GUI_WINDOW_RESIZABLE)) {
+    if(FLAG_CHECK(window->flags, GUI_WINDOW_RESIZABLE)) {
         GuiTriangle t = {
             .p0 = {{ window->pos.x + window->size.x - 12, window->pos.y + 1 }},
             .p1 = {{ window->pos.x + window->size.x, window->pos.y +1 }},
             .p2 = {{ window->pos.x + window->size.x, window->pos.y + 13 }},
         };
-        gui_triangle_add(window->tmp_data.draw_list, (vec2s){{window->pos.x + window->size.x - 12, window->pos.y + 1}}, (vec2s){{12, 12}}, gui_point_in_triangle(t, (vec2s){{ctx->io->mouse.position.x, ctx->io->mouse.position.y - ctx->io->window_size.y}}) ? rgb2vec4(0, 0, 0) : rgb2vec4(255, 99, 226) , GUI_TRIANGLE_CORNER_BOTTOM_R);
-    }*/
+        gui_triangle_add(window->tmp_data.draw_list, (vec2s){{window->pos.x + window->size.x - 12, window->pos.y + 1}}, (vec2s){{12, 12}}, gui_point_in_triangle(t, (vec2s){{ctx->io->mouse.position.x, ctx->io->window_size.y - ctx->io->mouse.position.y}}) ? rgb2vec4(255, 255, 255) : rgb2vec4(173, 14, 143) , GUI_TRIANGLE_CORNER_BOTTOM_R);
+    }
 
     if(window->flags & GUI_WINDOW_AUTO_RESIZE) {
         window->tmp_data.calced_size.y = 0;
@@ -146,6 +146,7 @@ struct GuiWindow *gui_window_create(const char *name, vec2s pos, vec2s size, boo
 }
 
 void gui_window_destroy(struct GuiWindow *window) {
+    //printf("Destroying window[%s]\n", window->name.c_str);
     gaia_array_destroy(window->tmp_data.draw_list->vertex_buffer);
     gaia_array_destroy(window->tmp_data.draw_list->index_buffer);
     free(window->tmp_data.draw_list);

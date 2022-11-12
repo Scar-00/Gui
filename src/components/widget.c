@@ -6,6 +6,7 @@
 #include "cglm/types.h"
 #include "gui.h"
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <vadefs.h>
 #define MOUSE_Y ctx->io->window_size.y - ctx->io->mouse.position.y
@@ -83,8 +84,6 @@ struct GuiItem gui_widget_data_get(String name) {
     // calculate bounding box of the widget
     self.bb = (struct GuiRect){.min = self.pos, .max = glms_vec2_add(self.pos, self.size)};
 
-    // TODO: account for horizontal expantion/shrinking
-    // if pos/size is userdefined let user handle bounds checking etc.
     if(window->flags & GUI_WINDOW_AUTO_RESIZE) {
         window->tmp_data.calced_size.y += self.size.y;
         //window->tmp_data.calced_size.x = max(self.size.x, window->tmp_data.calced_size.x);
@@ -408,7 +407,6 @@ GUI_API void gui_image(u32 tex_image_id, s32 width, s32 height) {
     GuiItem data = gui_widget_data_get(gaia_string_init(""));
 
     gui_box_add(window->tmp_data.draw_list, data.pos, data.size, COLOR_WHITE, (GuiTexture){.handle = tex_image_id});
-
 }
 
 // popups
@@ -526,7 +524,7 @@ vec2s gui_menu_size_get(struct GuiItem data) {
 
 static GuiMenu *gui_menu_get(GuiId id) {
     gaia_array_foreach(gui_window_current()->tmp_data.menus, menu) {
-        if(menu->id == id) return menu;
+        if(menu && menu->id == id) return menu;
     }
     return NULL;
 }
@@ -552,19 +550,20 @@ GUI_API bool gui_menu_begin(const char *label, ...) {
     bool hovered = false;
     gui_button_behavior(data.bb, &hovered);
 
-    struct GuiWindow *menu_window = gui_window_get(label);
+    struct GuiWindow *menu_window = gui_window_get(str.c_str);
     bool menu_just_created = (menu_window == NULL);
-    if(menu_just_created) {
+    GuiId menu_id = gui_hash(str.c_str);
+    if(menu_just_created && hovered) {
         GuiMenuFlags flags = GUI_MENU_NONE;
-        gaia_array_pushback(window->tmp_data.menus, ((GuiMenu){.label = str, .id = menu_window->id, .flags = flags}));
-        return false;
+        gaia_array_pushback(window->tmp_data.menus, ((GuiMenu){.label = str, .id = menu_id, .flags = flags}));
     }
 
+    if(hovered) {
+        GuiMenu *menu = gui_menu_get(menu_id);
 
-    GuiMenu *menu = gui_menu_get(menu_window->id);
-
-    if(hovered || FLAG_CHECK(menu->flags, GUI_MENU_ACTIVE))
-        gui_box_add(window->tmp_data.draw_list, data.pos, data.size, rgb2vec4(255, 99, 226), blank);
+        if(hovered || FLAG_CHECK(menu->flags, GUI_MENU_ACTIVE))
+            gui_box_add(window->tmp_data.draw_list, data.pos, data.size, rgb2vec4(255, 99, 226), blank);
+    }
 
     gui_text_add(window->tmp_data.draw_list, (vec2s){{data.pos.x + 2, data.pos.y + data.size.y / 4}}, 1, str.c_str);
     gui_box_add(window->tmp_data.draw_list, (vec2s){{data.bb.max.x - 16, data.pos.y}}, (vec2s){{16, 16}}, COLOR_WHITE, blank);
@@ -572,19 +571,15 @@ GUI_API bool gui_menu_begin(const char *label, ...) {
     bool open = hovered;
 
     vec2s pos = gui_menu_pos_get(data);
-    if(gui_begin(str.c_str, pos.x, pos.y, 300, 50, &open)){
+    if(gui_begin(str.c_str, pos.x, pos.y, 300, 50, &open) && open) {
         struct GuiWindow *window = gui_window_current();
         FLAG_SET(window->flags, GUI_WINDOW_NO_TILEBAR | GUI_WINDOW_WIDGETS_CENTERED | GUI_WINDOW_NO_MOVE | GUI_WINDOW_IS_POPUP | GUI_WINDOW_AUTO_RESIZE);
-
         gui_window_bring_to_front(window);
 
         gui_text("{%.1f}, {%.1f}", data.size.x, data.size.y);
-
-        gui_end();
     }
 
-
-    return true;
+    return open;
 }
 
 GUI_API bool gui_menu_item(const char *name) {
@@ -601,6 +596,7 @@ GUI_API void gui_menu_end() {
         window->pos.y -= window->size.y;
     }
 
+    gui_end();
 }
 
 //trees

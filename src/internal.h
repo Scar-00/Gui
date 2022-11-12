@@ -67,6 +67,14 @@ typedef union ivec2s {
   };
 }ivec2s;
 
+typedef enum GuiType {
+    GUI_U32,
+    GUI_S32,
+
+    GUI_F64,
+    GUI_F32,
+}GuiType;
+
 typedef struct GuiVAO {
     GLuint handle;
 }GuiVAO;
@@ -97,10 +105,6 @@ typedef struct GuiTexture {
     vec2s size;
 }GuiTexture;
 
-typedef struct GuiViewPort {
-    vec2s pos, size;
-}GuiViewPort;
-
 typedef struct GuiRenderingData {
     GuiVAO vao;
     GuiVBO vbo;
@@ -108,7 +112,6 @@ typedef struct GuiRenderingData {
 
     GuiShader shader;
     GuiCamera camera;
-    GuiViewPort view_port;
 
     struct GuiWindow **redering_order;
     struct GuiTexture textures[32];
@@ -277,14 +280,6 @@ enum ArrowTypes {
     ARROW_RIGHT,
 };
 
-typedef struct GuiFrameBuffer {
-    ivec2s size;
-    u32 samples;
-    bool render_target;
-    u32 color_buffer;
-    u32 renderer_id;
-}GuiFrameBuffer;
-
 typedef struct GuiTriangle {
     vec2s p0, p1, p2;
 }GuiTriangle;
@@ -335,9 +330,6 @@ struct GuiTexture gui_texture_from_path(const char *path);
 void gui_texture_destroy(struct GuiTexture self);
 void gui_texture_bind(struct GuiTexture self);
 
-//viewport
-GuiViewPort gui_viewport_init(vec2s pos, vec2s size);
-
 typedef enum GuiTrangleSide {
     GUI_TRIANGLE_CORNER_TOP_L,
     GUI_TRIANGLE_CORNER_TOP_R,
@@ -351,13 +343,6 @@ void gui_box_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s col
 void gui_text_add(struct GuiDrawList *draw_list, vec2s pos, f32 scale, const char *format);
 void gui_rect_add(struct GuiDrawList *draw_list, struct GuiRect bb, vec4s color);
 void gui_triangle_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s color, GuiTrangleSide side);
-//buffer
-GuiFrameBuffer gui_frame_buffer_init();
-void gui_frame_buffer_invalidate(GuiFrameBuffer *self);
-void gui_frame_buffer_bind(GuiFrameBuffer self);
-void gui_frame_buffer_unbind();
-void gui_frame_buffer_set_size(GuiFrameBuffer *self, ivec2s size);
-void gui_frame_buffer_set_target(GuiFrameBuffer *self);
 
 //windows
 struct GuiWindowSaveData gui_window_load(String name);

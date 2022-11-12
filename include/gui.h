@@ -7,23 +7,23 @@
 // gui_renderer_data_init();
 //
 // initialize the gui I/O
-// if you want to let gui handle the io
-// gui_io_init(GLFWwindow*);
-// if you want to handle I/O you need to pass them to the gui aswell
-// void gui_io_key_callback(GLFWwindow *, int, int, int, int);
-// void gui_io_cursor_callback(GLFWwindow *, double, double);
-// void gui_io_mouse_callback(GLFWwindow *, int, int, int);
-// void gui_io_size_callback(GLFWwindow *, int, int);
+// call if you want to let gui handle the io
+// gui_io_init(void* window);
+// if you want to handle I/O you need to pass the data to gui aswell
+// void gui_io_key_callback(void *, int, int, int, int);
+// void gui_io_cursor_callback(void *, double, double);
+// void gui_io_mouse_callback(void *, int, int, int);
+// void gui_io_size_callback(void *, int, int);
 //
 // call the begin of rendering
-// gui_render_begin
+// gui_render_begin()
 //
 // -----begin gui code-----
 //
 //
 // ------end gui code------
 //
-// call at the end of rendering(expects orhographic projection)
+// call at the end of rendering(orhographic projection)
 // gui_render();
 //
 // must to be called at the end of every frame
@@ -60,20 +60,6 @@ typedef unsigned int        u32;
 typedef unsigned short      u16;
 typedef unsigned char       u8;
 
-//math/vector
-/*
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-braces"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstatic-in-inline"
-
-#include <cglm/cglm.h>
-#include <cglm/struct.h>
-
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-*/
-
 //std
 #include <stdarg.h>
 #include <string.h>
@@ -101,6 +87,12 @@ typedef enum GuiWindowFlags_ {
     GUI_WINDOW_LOCKED = BIT(13),
     GUI_WINDOW_SCROLLABLE = BIT(14),
 }GuiWindowFlags_;
+
+typedef struct GuiStyle {
+    u32 color_primary;
+    u32 color_inactive;
+    u32 color_active;
+}GuiStyle;
 
 //gui context
 GUI_API bool gui_context_create();
