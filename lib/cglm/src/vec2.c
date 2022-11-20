@@ -208,6 +208,30 @@ glmc_vec2_clamp(vec2 v, float minval, float maxval) {
 
 CGLM_EXPORT
 void
+glmc_vec2_abs(vec2 v, vec2 dest) {
+  glm_vec2_abs(v, dest);
+}
+
+CGLM_EXPORT
+void
 glmc_vec2_lerp(vec2 from, vec2 to, float t, vec2 dest) {
   glm_vec2_lerp(from, to, t, dest);
+}
+
+CGLM_EXPORT
+void
+glmc_vec2_complex_mul(vec2 a, vec2 b, vec2 dest) {
+  glm_vec2_complex_mul(a, b, dest);
+}
+
+CGLM_EXPORT
+void
+glmc_vec2_complex_div(vec2 a, vec2 b, vec2 dest) {
+  glm_vec2_complex_div(a, b, dest);
+}
+
+CGLM_EXPORT
+void
+glmc_vec2_complex_conjugate(vec2 a, vec2 dest) {
+  glm_vec2_complex_conjugate(a, dest);
 }

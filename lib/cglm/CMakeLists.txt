@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.8.2)
-project(cglm VERSION 0.8.0 LANGUAGES C)
+project(cglm
+  VERSION 0.8.7
+  HOMEPAGE_URL https://github.com/recp/cglm
+  DESCRIPTION "OpenGL Mathematics (glm) for C"
+  LANGUAGES C
+)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED YES)
@@ -18,7 +23,7 @@ else(CGLM_STATIC)
 endif()
 
 if(CGLM_USE_C99)
-  set(C_STANDARD 99)
+  set(CMAKE_C_STANDARD 99)
 endif()
 
 if(MSVC)
@@ -47,7 +52,10 @@ include(GNUInstallDirs)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+
+if(NOT CPack_CMake_INCLUDED)
+  include(CPack)
+endif()
 
 # Target Start
 add_library(${PROJECT_NAME}
@@ -58,8 +66,11 @@ add_library(${PROJECT_NAME}
   src/quat.c
   src/cam.c
   src/vec2.c
+  src/ivec2.c
   src/vec3.c
+  src/ivec3.c
   src/vec4.c
+  src/ivec4.c
   src/mat2.c
   src/mat3.c
   src/mat4.c
@@ -73,6 +84,20 @@ add_library(${PROJECT_NAME}
   src/bezier.c
   src/ray.c
   src/affine2d.c
+  src/clipspace/ortho_lh_no.c
+  src/clipspace/ortho_lh_zo.c
+  src/clipspace/ortho_rh_no.c
+  src/clipspace/ortho_rh_zo.c
+  src/clipspace/persp_lh_no.c
+  src/clipspace/persp_lh_zo.c
+  src/clipspace/persp_rh_no.c
+  src/clipspace/persp_rh_zo.c
+  src/clipspace/view_lh_no.c
+  src/clipspace/view_lh_zo.c
+  src/clipspace/view_rh_no.c
+  src/clipspace/view_rh_zo.c
+  src/clipspace/project_no.c
+  src/clipspace/project_zo.c
   )
 
 if(CGLM_SHARED)
@@ -85,6 +110,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
                               VERSION ${PROJECT_VERSION} 
                             SOVERSION ${PROJECT_VERSION_MAJOR})
 
+if(WIN32)
+  # Because SOVERSION has no effect to file naming on Windows
+  set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_NAME ${PROJECT_NAME}-${PROJECT_VERSION_MAJOR})
+endif()
+
 target_include_directories(${PROJECT_NAME}
     PUBLIC 
         $<INSTALL_INTERFACE:include>    
@@ -92,6 +123,11 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+# Target for header-only usage
+add_library(${PROJECT_NAME}_headers INTERFACE)
+target_include_directories(${PROJECT_NAME}_headers INTERFACE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Test Configuration
 if(CGLM_USE_TEST)
@@ -105,7 +141,7 @@ install(TARGETS ${PROJECT_NAME}
         EXPORT  ${PROJECT_NAME}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 install(DIRECTORY include/${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         PATTERN ".*" EXCLUDE)
@@ -117,6 +153,11 @@ export(TARGETS ${PROJECT_NAME}
 )
 
 install(EXPORT      ${PROJECT_NAME}
+        FILE        "${PROJECT_NAME}Config.cmake"
         NAMESPACE   ${PROJECT_NAME}::
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake)
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
+configure_file(cglm.pc.in cglm.pc @ONLY)
+
+install(FILES ${CMAKE_BINARY_DIR}/cglm.pc
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

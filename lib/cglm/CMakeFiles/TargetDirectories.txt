@@ -1,9 +1,0 @@
-C:/Users/fiffi/OneDrive/Desktop/Tile_Game/lib/cglm/CMakeFiles/cglm.dir
-C:/Users/fiffi/OneDrive/Desktop/Tile_Game/lib/cglm/CMakeFiles/package.dir
-C:/Users/fiffi/OneDrive/Desktop/Tile_Game/lib/cglm/CMakeFiles/package_source.dir
-C:/Users/fiffi/OneDrive/Desktop/Tile_Game/lib/cglm/CMakeFiles/install.dir
-C:/Users/fiffi/OneDrive/Desktop/Tile_Game/lib/cglm/CMakeFiles/install/local.dir
-C:/Users/fiffi/OneDrive/Desktop/Tile_Game/lib/cglm/CMakeFiles/edit_cache.dir
-C:/Users/fiffi/OneDrive/Desktop/Tile_Game/lib/cglm/CMakeFiles/rebuild_cache.dir
-C:/Users/fiffi/OneDrive/Desktop/Tile_Game/lib/cglm/CMakeFiles/list_install_components.dir
-C:/Users/fiffi/OneDrive/Desktop/Tile_Game/lib/cglm/CMakeFiles/install/strip.dir

@@ -1,5 +1,5 @@
 project('cglm', 'c',
-    version : '0.8.0', 
+    version : '0.8.7',
     license : 'mit',
     default_options : [
         'c_std=c11',
@@ -28,34 +28,53 @@ endif
 cglm_inc = include_directories('include')
 
 cglm_src = files(
-    'src/affine.c',
-    'src/affine2d.c',
-    'src/bezier.c',
-    'src/box.c',
-    'src/cam.c',
-    'src/curve.c',
-    'src/ease.c',
     'src/euler.c',
-    'src/frustum.c',
+    'src/affine.c',
     'src/io.c',
+    'src/quat.c',
+    'src/cam.c',
+    'src/vec2.c',
+    'src/ivec2.c',
+    'src/vec3.c',
+    'src/ivec3.c',
+    'src/vec4.c',
+    'src/ivec4.c',
     'src/mat2.c',
     'src/mat3.c',
     'src/mat4.c',
     'src/plane.c',
+    'src/frustum.c',
+    'src/box.c',
     'src/project.c',
-    'src/quat.c',
-    'src/ray.c',
     'src/sphere.c',
-    'src/vec2.c',
-    'src/vec3.c',
-    'src/vec4.c'
+    'src/ease.c',
+    'src/curve.c',
+    'src/bezier.c',
+    'src/ray.c',
+    'src/affine2d.c',
+    'src/clipspace/ortho_lh_no.c',
+    'src/clipspace/ortho_lh_zo.c',
+    'src/clipspace/ortho_rh_no.c',
+    'src/clipspace/ortho_rh_zo.c',
+    'src/clipspace/persp_lh_no.c',
+    'src/clipspace/persp_lh_zo.c',
+    'src/clipspace/persp_rh_no.c',
+    'src/clipspace/persp_rh_zo.c',
+    'src/clipspace/view_lh_no.c',
+    'src/clipspace/view_lh_zo.c',
+    'src/clipspace/view_rh_no.c',
+    'src/clipspace/view_rh_zo.c',
+    'src/clipspace/project_no.c',
+    'src/clipspace/project_zo.c'
 )
 
 cglm_lib = library('cglm',
     cglm_src,
     install : cglm_install,
     dependencies : cglm_deps,
-    c_args : [ build_args, cglm_args ]
+    c_args : [ build_args, cglm_args ],
+    version : meson.project_version(),
+    soversion : '0'
 )
 
 cglm_dep = declare_dependency(
@@ -88,17 +107,21 @@ if get_option('build_tests') == true
 
 test_src = files(
     'test/runner.c',
-    'test/src/test_euler.c',
     'test/src/test_bezier.c',
     'test/src/test_cam.c',
-    'test/src/test_struct.c',
+    'test/src/test_cam_lh_no.c',
+    'test/src/test_cam_lh_zo.c',
+    'test/src/test_cam_rh_no.c',
+    'test/src/test_cam_rh_zo.c',
     'test/src/test_clamp.c',
     'test/src/test_common.c',
-    'test/src/tests.c'
+    'test/src/test_euler.c',
+    'test/src/tests.c',
+    'test/src/test_struct.c',
 )
 
-test_exe = executable('tests', 
-    test_src, 
+test_exe = executable('tests',
+    test_src,
     dependencies : cglm_dep,
     c_args : '-DGLM_TESTS_NO_COLORFUL_OUTPUT'
 )

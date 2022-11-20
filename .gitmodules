@@ -1,0 +1,15 @@
+[submodule "cglm"]
+	path = lib/cglm
+	url = https://github.com/recp/cglm
+
+[submodule "freetype"]
+	path = lib/freetype
+	url = https://github.com/freetype/freetype
+
+[submodule "gaia"]
+	path = lib/gaia
+	url = https://github.com/Scar-00/Gaia.git
+
+[submodule "glfw"]
+	path = lib/glfw
+	url = https://github.com/freetype/freetype
