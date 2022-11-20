@@ -310,7 +310,7 @@ void gui_window_cursor_advance() {
     struct GuiWindow *window = gui_window_current();
     window->tmp_data.cursor_pos.y -= WIDGET_DEFAULT_HIEGHT + WIDGET_DEFAULT_PADDING_Y;
     window->tmp_data.cursor_pos.x = window->pos.x;
-    if(gui_tree_current()) {
+    if(gui_tree_current() != NULL) {
         window->tmp_data.cursor_pos.x += gui_tree_current()->depth * 10;
     }
 }

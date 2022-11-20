@@ -214,6 +214,7 @@ typedef struct GuiMenu {
     String label;
     GuiId id;
     GuiMenuFlags flags;
+    GuiWindow *parent_window;
 }GuiMenu;
 
 typedef struct GuiTree {

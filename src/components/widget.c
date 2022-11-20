@@ -29,7 +29,7 @@ GUI_API void gui_set_next_item_size(s32 width, s32 height) {
     window->tmp_data.next_item_data.size = (vec2s){{width, height}};
 }
 
-static inline vec2s gui_widget_calc_pos(struct GuiWindow *window) {
+static vec2s gui_widget_calc_pos(struct GuiWindow *window) {
     if(window->tmp_data.next_item_data.pos.x >= 0.0f && window->tmp_data.next_item_data.pos.y >= 0.0f) {
         vec2s widget_pos = glms_vec2_add(window->pos, window->tmp_data.next_item_data.pos);
         window->tmp_data.next_item_data.pos = (vec2s){{-1, -1}};
@@ -41,7 +41,7 @@ static inline vec2s gui_widget_calc_pos(struct GuiWindow *window) {
     return pos;
 }
 
-static inline vec2s gui_widget_calc_size(struct GuiWindow *window, String name) {
+static vec2s gui_widget_calc_size(struct GuiWindow *window, String name) {
     //FIXME: limit the size to the parent window
     vec2s size = {0};
 
@@ -93,18 +93,10 @@ struct GuiItem gui_widget_data_get(String name) {
     }
 
     //TODO: trees
-    /*
     gui_tree_current();
     GuiTree *tree = gui_tree_current();
     if(tree) {
         tree->size++;
-    }
-    */
-
-    //mark the item as hidden because it clips out of the window
-    if(self.bb.min.y < window->pos.y) {
-        //gui_panic(ERR_WIDGET_OUT_OF_BOUNDS, "%s", name.c_str);
-        //FLAG_SET(self.flags, GUI_ITEM_HIDDEN);
     }
 
     // add the new item to the global context
@@ -416,7 +408,6 @@ static vec2s gui_popup_calc_pos(struct GuiWindow *parent_window) {
     struct GuiIO *io = ctx->io;
     vec2s default_pos = (vec2s){{ io->mouse.position.x, MOUSE_Y }};
 
-
     return default_pos;
 }
 
@@ -548,36 +539,49 @@ GUI_API bool gui_menu_begin(const char *label, ...) {
     }
 
     bool hovered = false;
-    gui_button_behavior(data.bb, &hovered);
+    bool clicked = gui_button_behavior(data.bb, &hovered);
 
     struct GuiWindow *menu_window = gui_window_get(str.c_str);
     bool menu_just_created = (menu_window == NULL);
     GuiId menu_id = gui_hash(str.c_str);
     if(menu_just_created && hovered) {
         GuiMenuFlags flags = GUI_MENU_NONE;
-        gaia_array_pushback(window->tmp_data.menus, ((GuiMenu){.label = str, .id = menu_id, .flags = flags}));
+        gaia_array_pushback(window->tmp_data.menus, ((GuiMenu){.label = str, .id = menu_id, .flags = flags, .parent_window = window}));
     }
 
-    if(hovered) {
+    bool open = false;
+
+    if(hovered || menu_window) {
         GuiMenu *menu = gui_menu_get(menu_id);
 
-        if(hovered || FLAG_CHECK(menu->flags, GUI_MENU_ACTIVE))
-            gui_box_add(window->tmp_data.draw_list, data.pos, data.size, rgb2vec4(255, 99, 226), blank);
+       if(hovered || FLAG_CHECK(menu->flags, GUI_MENU_ACTIVE))
+            gui_box_add(window->tmp_data.draw_list, data.pos, data.size, hovered ? rgb2vec4(255, 99, 226) : rgb2vec4(173, 14, 143), blank);
+
+        //!popup->just_opened && io->mouse.buttons[GLFW_MOUSE_BUTTON_LEFT].pressed && !gui_widget_hovererd(window->tmp_data.bb)
+        if(clicked) {
+            FLAG_CHECK(menu->flags, GUI_MENU_ACTIVE) ? FLAG_CLEAR(menu->flags, GUI_MENU_ACTIVE) : FLAG_SET(menu->flags, GUI_MENU_ACTIVE);
+        }
+
+        if(menu_window && ctx->io->mouse.buttons[GLFW_MOUSE_BUTTON_LEFT].pressed && (menu_window && !gui_widget_hovererd(menu_window->tmp_data.bb)))
+            FLAG_CLEAR(menu->flags, GUI_MENU_ACTIVE);
+
+        open = FLAG_CHECK(menu->flags, GUI_MENU_ACTIVE);
     }
 
     gui_text_add(window->tmp_data.draw_list, (vec2s){{data.pos.x + 2, data.pos.y + data.size.y / 4}}, 1, str.c_str);
     gui_box_add(window->tmp_data.draw_list, (vec2s){{data.bb.max.x - 16, data.pos.y}}, (vec2s){{16, 16}}, COLOR_WHITE, blank);
 
-    bool open = hovered;
+    //bool open = hovered;
 
     vec2s pos = gui_menu_pos_get(data);
     if(gui_begin(str.c_str, pos.x, pos.y, 300, 50, &open) && open) {
         struct GuiWindow *window = gui_window_current();
-        FLAG_SET(window->flags, GUI_WINDOW_NO_TILEBAR | GUI_WINDOW_WIDGETS_CENTERED | GUI_WINDOW_NO_MOVE | GUI_WINDOW_IS_POPUP | GUI_WINDOW_AUTO_RESIZE);
+        FLAG_SET(window->flags, GUI_WINDOW_NO_TILEBAR | GUI_WINDOW_WIDGETS_CENTERED | GUI_WINDOW_NO_MOVE | GUI_WINDOW_IS_POPUP | GUI_WINDOW_AUTO_RESIZE | GUI_WINDOW_IS_MENU);
         gui_window_bring_to_front(window);
 
         gui_text("{%.1f}, {%.1f}", data.size.x, data.size.y);
     }
+
 
     return open;
 }
@@ -597,6 +601,10 @@ GUI_API void gui_menu_end() {
     }
 
     gui_end();
+    //struct GuiMenu *menu = gui_menu_get(window->id);
+    //printf("name -> %s\n", menu->parent_window->name.c_str);
+
+    //if(FLAG_CHECK(window->flags, GUI_WINDOW_IS_MENU)) ctx->current_window = gui_menu_get(window->id)->parent_window;
 }
 
 //trees
@@ -648,9 +656,9 @@ GUI_API void gui_tree_end() {
 
     GuiTree *tree = gui_tree_current();
 
-    gui_box_add(window->tmp_data.draw_list, (vec2s){{tree->pos.x + 5, tree->pos.y - (tree->size + 1) * (WIDGET_DEFAULT_HIEGHT) + 4}}, (vec2s){{1, (tree->size + 1 ) * (WIDGET_DEFAULT_HIEGHT) - 8}}, (vec4s){{1, 1, 1, 1}}, blank);
+    gui_box_add(window->tmp_data.draw_list, (vec2s){{tree->pos.x + 5, tree->pos.y - (tree->size + 1) * (WIDGET_DEFAULT_HIEGHT) + 4}}, (vec2s){{1, (tree->size + 1 ) * (WIDGET_DEFAULT_HIEGHT) - 8}}, COLOR_WHITE, blank);
 
-    for(u32 i = 0; i < tree->size - 1; i++) {
+    for(u32 i = 0; i < tree->size ; i++) {
         vec2s pos = {{tree->pos.x + 5, (tree->pos.y - i * (WIDGET_DEFAULT_HIEGHT - window->padding.y)) - TREE_DIVIDER}};
         gui_box_add(window->tmp_data.draw_list, pos, (vec2s){{5, 1}}, (vec4s){{1, 0, 1, 1}}, blank);
     }

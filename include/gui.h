@@ -86,6 +86,7 @@ typedef enum GuiWindowFlags_ {
     GUI_WINDOW_RESIZABLE = BIT(12),
     GUI_WINDOW_LOCKED = BIT(13),
     GUI_WINDOW_SCROLLABLE = BIT(14),
+    GUI_WINDOW_IS_MENU = BIT(15),
 }GuiWindowFlags_;
 
 typedef struct GuiStyle {

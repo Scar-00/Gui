@@ -20,6 +20,11 @@ CP = -MJ $@.json
 SRC = $(wildcard src/**/**/*.c) $(wildcard src/**/*.c) $(wildcard src/*.c) #$(wildcard include/Gaia/**/**/*.h) $(wildcard include/Gaia/**/*.h) $(wildcard include/Gaia/*.h)
 OBJ = $(SRC:.c=.o)
 
+libs:
+	cd lib/cglm & make
+	cd gaia & make static
+	$(CC) -c lib/glad/src/glad.c -o lib/glad/src/glad.o -Ilib/glad/include
+
 static: $(OBJ)
 	$(AR) libgui.a $^ $(LDFLAGS)
 
