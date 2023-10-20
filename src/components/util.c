@@ -121,5 +121,7 @@ bool gui_point_in_triangle(GuiTriangle triangle, vec2s point) {
 
 //Debug
 GUI_API void gui_test() {
-    glViewport(0, 0, ctx->io->window_size.x, ctx->io->window_size.y);
+    for(u32 i = 0; i < gaia_array_length(ctx->windows); i++){
+        gui_text("[%s]", ctx->windows[i]->name.c_str);
+    }
 }

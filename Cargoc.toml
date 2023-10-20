@@ -1,0 +1,16 @@
+[package]
+name = "gui"
+typ = "staticlib"
+gen_config = true
+src = ["src/"]
+collect_rec = true
+out_dir = "./"
+
+[lib]
+header = ["include/"]
+
+[compiler]
+includes = ["include/", "lib/cglm/include", "lib/stb", "lib/gaia/include", "lib/freetype", "lib/glad/include", "lib/glfw/include"]
+
+[linker]
+libs = ["lib/gaia/libgaia.lib", "lib/freetype/freetype.lib", "lib/glad/src/glad.o", "lib/glfw/glfw3dll.lib"]

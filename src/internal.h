@@ -57,7 +57,7 @@ typedef f64 GuiTime;
     __typeof__ (mx) _mx = (mx); \
     max(_mn, min(_mx, _x)); })
 
-
+/*
 typedef int ivec2[2];
 typedef union ivec2s {
   ivec2 raw;
@@ -66,6 +66,7 @@ typedef union ivec2s {
     int y;
   };
 }ivec2s;
+*/
 
 typedef enum GuiType {
     GUI_U32,
@@ -175,6 +176,7 @@ typedef struct WTmpData {
     }next_item_data;
     struct GuiWindow *child_windows[WINDOW_MAX_CHILDREN];
     size_t child_windows_count;
+    struct GuiWindow *parent_window;
     vec2s calced_size;
     struct GuiMenu *menus;
     struct GuiTree *trees;
@@ -214,7 +216,6 @@ typedef struct GuiMenu {
     String label;
     GuiId id;
     GuiMenuFlags flags;
-    GuiWindow *parent_window;
 }GuiMenu;
 
 typedef struct GuiTree {

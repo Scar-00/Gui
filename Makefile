@@ -9,7 +9,6 @@ CFLAGS += -Ilib/freetype
 CFLAGS += -Ilib/glad/include
 CFLAGS += -Ilib/glfw/include
 
-LDFLAGS = lib/cglm/libcglm.a
 LDFLAGS += lib/gaia/libgaia.lib
 LDFLAGS += lib/freetype/freetype.lib
 LDFLAGS += lib/glad/src/glad.o
@@ -19,9 +18,9 @@ CP = -MJ $@.json
 
 SRC = $(wildcard src/**/**/*.c) $(wildcard src/**/*.c) $(wildcard src/*.c) #$(wildcard include/Gaia/**/**/*.h) $(wildcard include/Gaia/**/*.h) $(wildcard include/Gaia/*.h)
 OBJ = $(SRC:.c=.o)
+DATA = $(wildcard src/**/**/*.o.json) $(wildcard src/**/*.o.json) $(wildcard src/*.o.json)
 
 libs:
-	cd lib/cglm & make
 	cd gaia & make static
 	$(CC) -c lib/glad/src/glad.c -o lib/glad/src/glad.o -Ilib/glad/include
 
@@ -31,8 +30,11 @@ static: $(OBJ)
 dynamic: $(OBJ)
 	$(CC) -shared -o gui.dll $^ $(LDFLAGS)
 
+data: $(OBJ)
+	sed -e '1 s/./[ '\\\n'{/' -e '$$ s/,$$/'\\\n'] /' $(DATA) > compile_commands.json
+
 %.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGS)
+	$(CC) -o $@ -c $< -MJ $@.json $(CFLAGS)
 
 clean:
 	rm -rf $(OBJ) libgui.a gui.dll gui.lib gui.exp

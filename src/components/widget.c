@@ -362,7 +362,7 @@ GUI_API bool gui_slider_f32(const char *name, f32 *value, f32 lower, f32 upper) 
 
     f32 slider_value = ((*value - lower) / (upper - lower)) * SLIDER_LEN;
     vec2s slider_pos = {{ data.pos.x + slider_value, data.pos.y + 2 }};
-    slider_pos.x = clamp(slider_pos.x, data.pos.x + 4, data.pos.x + SLIDER_LEN - 8);
+    slider_pos.x = clamp(slider_pos.x - 0.00000001f, data.pos.x + 4, (data.pos.x + SLIDER_LEN - 8) + 0.00000001f);
 
     bool hovered = false;
     gui_button_behavior(data.bb, &hovered);
@@ -485,7 +485,7 @@ GUI_API bool gui_popup_begin(const char *name) {
         gui_window_child_pop(popup->parent_window);
     }
 
-    if((size_t)window->tmp_data.draw_index != (gaia_array_length(g->rendering_data.redering_order) - 1) && !popup->should_close)
+    if(!popup->should_close && (size_t)window->tmp_data.draw_index != (gaia_array_length(g->rendering_data.redering_order) - 1))
         gui_window_bring_to_front(window);
 
     return true;
@@ -546,7 +546,7 @@ GUI_API bool gui_menu_begin(const char *label, ...) {
     GuiId menu_id = gui_hash(str.c_str);
     if(menu_just_created && hovered) {
         GuiMenuFlags flags = GUI_MENU_NONE;
-        gaia_array_pushback(window->tmp_data.menus, ((GuiMenu){.label = str, .id = menu_id, .flags = flags, .parent_window = window}));
+        gaia_array_pushback(window->tmp_data.menus, ((GuiMenu){.label = str, .id = menu_id, .flags = flags}));
     }
 
     bool open = false;
@@ -576,7 +576,7 @@ GUI_API bool gui_menu_begin(const char *label, ...) {
     vec2s pos = gui_menu_pos_get(data);
     if(gui_begin(str.c_str, pos.x, pos.y, 300, 50, &open) && open) {
         struct GuiWindow *window = gui_window_current();
-        FLAG_SET(window->flags, GUI_WINDOW_NO_TILEBAR | GUI_WINDOW_WIDGETS_CENTERED | GUI_WINDOW_NO_MOVE | GUI_WINDOW_IS_POPUP | GUI_WINDOW_AUTO_RESIZE | GUI_WINDOW_IS_MENU);
+        FLAG_SET(window->flags, GUI_WINDOW_NO_TILEBAR | GUI_WINDOW_WIDGETS_CENTERED | GUI_WINDOW_NO_MOVE | GUI_WINDOW_IS_POPUP | GUI_WINDOW_AUTO_RESIZE | GUI_WINDOW_IS_MENU | GUI_WINDOW_IS_CHILD);
         gui_window_bring_to_front(window);
 
         gui_text("{%.1f}, {%.1f}", data.size.x, data.size.y);
@@ -626,7 +626,7 @@ GUI_API bool gui_tree_begin(char const *label) {
         return false;
 
     u32 depth = 1;
-    if(gui_tree_current()) depth = gui_tree_current()->depth + 1;
+    //if(gui_tree_current()) depth = gui_tree_current()->depth + 1;
     String str = gaia_string_init(label);
 
     GuiTree tree = {
@@ -662,6 +662,6 @@ GUI_API void gui_tree_end() {
         vec2s pos = {{tree->pos.x + 5, (tree->pos.y - i * (WIDGET_DEFAULT_HIEGHT - window->padding.y)) - TREE_DIVIDER}};
         gui_box_add(window->tmp_data.draw_list, pos, (vec2s){{5, 1}}, (vec4s){{1, 0, 1, 1}}, blank);
     }
-
-    gaia_array_length(window->tmp_data.trees)--;
+    gaia_array_pop(window->tmp_data.trees);
+    //gaia_array_length(window->tmp_data.trees)--;
 }

@@ -2,3 +2,5 @@ lib/cglm
 lib/freetype
 lib/gaia
 lib/glfw
+*.idx
+*.json

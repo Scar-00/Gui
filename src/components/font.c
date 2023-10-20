@@ -18,7 +18,7 @@ struct GuiFont *gui_font_init(const char *path, u32 size) {
 
     FT_Set_Pixel_Sizes(face, 0, size);
 
-    s32 max_dim = (1 + (face->size->metrics.height >> 6)) * ceilf(sqrtf(96));
+    s32 max_dim = (1 + (face->size->metrics.height >> 5)) * ceilf(sqrtf(96));
 
     ivec2s tex_size = {{1, 0}};
     while(tex_size.x < max_dim) tex_size.x <<= 1;
@@ -29,7 +29,12 @@ struct GuiFont *gui_font_init(const char *path, u32 size) {
     u8 *bitmap = calloc(tex_size.x * tex_size.y, sizeof(u8));
 
     for(u32 c = 32; c < 128; c++) {
-        if(FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+        if(FT_Load_Char(face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_(FT_RENDER_MODE_SDF))) {
+            fprintf(stderr, "Could not load char[%c]\n", c);
+            exit(1);
+        }
+
+        if(FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL)) {
             fprintf(stderr, "Could not load char[%c]\n", c);
             exit(1);
         }
@@ -38,7 +43,7 @@ struct GuiFont *gui_font_init(const char *path, u32 size) {
 
         if(pen.x + bmp->width >= (u32)tex_size.x){
             pen.x = 0;
-            pen.y += ((face->size->metrics.height >> 6) + 1);
+            pen.y += ((face->size->metrics.height >> 5));
         }
 
         for(u32 row = 0; row < bmp->rows; ++row){

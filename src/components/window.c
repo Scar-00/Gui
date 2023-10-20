@@ -3,6 +3,7 @@
 #include "Gaia/io/io.h"
 #include "Gaia/io/parse.h"
 #include "Gaia/util/array.h"
+#include "cglm/struct/vec2.h"
 #include "cglm/types-struct.h"
 #include "gui.h"
 #include <stdbool.h>
@@ -28,6 +29,10 @@ GUI_API bool gui_begin(const char *name, f32 x, f32 y, f32 width, f32 height, bo
         window = gui_window_create(name, pos, size, window_just_created);
     else
         gui_window_update(window, window_just_created);
+
+    if(FLAG_CHECK(window->flags, GUI_WINDOW_IS_CHILD) && gaia_array_length(g->windows) > 1) {
+        window->tmp_data.parent_window = g->current_window;
+    }
 
     g->current_window = window;
 
@@ -90,6 +95,10 @@ GUI_API void gui_end() {
         gui_window_set_size(window->tmp_data.calced_size.x, window->tmp_data.calced_size.y);
         window->flags |= gui_vec2s_cmp(window->size, window->tmp_data.calced_size) ? GUI_WINDOW_SIZE_CALCED : GUI_WINDOW_NONE;
     }
+
+    if(FLAG_CHECK(window->flags, GUI_WINDOW_IS_CHILD) && gaia_array_length(ctx->windows) > 0) {
+        ctx->current_window = window->tmp_data.parent_window;
+    }
 }
 
 GUI_API void gui_window_set_size(f32 width, f32 height) {
@@ -120,6 +129,7 @@ struct GuiWindow *gui_window_create(const char *name, vec2s pos, vec2s size, boo
                 .pos = {{-1, -1}},
                 .size = {{-1, -1}},
             },
+            .parent_window = NULL,
             .calced_size = (vec2s){{ size.x, 0 }},
             .menus = gaia_array_create(GuiMenu, 1),
             .trees = gaia_array_create(GuiTree, 1),
@@ -244,6 +254,12 @@ bool gui_is_clickable() {
     return clickable;
 }
 
+static bool gui_border_hoverer(struct GuiWindow *window) {
+    struct GuiContext *g = ctx;
+    return (g->io->mouse.position.x >= window->pos.x - 3 || g->io->mouse.position.x <= window->pos.x + 3);
+        //|| (g->io->mouse.position.x >= (window->pos.x + window->size.x) - 3 || g->io->mouse.position.x <= (window->pos.x + window->size.x) + 3);
+}
+
 void gui_window_update(struct GuiWindow *window, bool just_created) {
     struct GuiContext *g = ctx;
     struct GuiIO *io = g->io;
@@ -271,6 +287,22 @@ void gui_window_update(struct GuiWindow *window, bool just_created) {
         g->window_active = window;
         if(!((window->flags & GUI_WINDOW_NO_SORT) == GUI_WINDOW_NO_SORT))
             gui_window_bring_to_front(window);
+    }
+
+    if(clickable) {
+        if((g->io->mouse.position.x >= window->pos.x - 3 && g->io->mouse.position.x <= window->pos.x + 3) && g->io->mouse.buttons[GLFW_MOUSE_BUTTON_LEFT].down)
+            window->size.x -= -g->io->mouse.delta.x;
+        if((g->io->mouse.position.x >= (window->pos.x + window->size.x) - 15 && g->io->mouse.position.x <= (window->pos.x + window->size.x) + 15) && g->io->mouse.buttons[GLFW_MOUSE_BUTTON_LEFT].down) {
+            FLAG_SET(window->flags, GUI_WINDOW_LOCKED);
+            window->size.x += g->io->mouse.delta.x;
+        }else {
+            FLAG_CLEAR(window->flags, GUI_WINDOW_LOCKED);
+        }
+        struct GuiRect rec = {
+            .min = glms_vec2_sub(window->pos, (vec2s){{3, 0}}),
+            .max = glms_vec2_sub(glms_vec2_add(window->pos, window->size), (vec2s){{3, 3}})
+        };
+        gui_rect_add(window->tmp_data.draw_list, rec, (vec4s){{1, 0, 1, 1}});
     }
 
     //GuiTriangle resizer = {

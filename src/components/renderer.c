@@ -1,6 +1,7 @@
 #include "./../internal.h"
+#include "../shader/shader.h"
+
 #include "glad/glad.h"
-#include <float.h>
 
 struct GuiDrawList *gui_draw_list_create() {
     struct GuiDrawList *self = calloc(1, sizeof(struct GuiDrawList));
@@ -102,10 +103,11 @@ static void gui_render_prep() {
         gui_vbo_buffer(data->vbo, draw_data->vertex_buffer, 0, gaia_array_length(draw_data->vertex_buffer) * sizeof(f32));
         gui_vbo_buffer(data->ibo, draw_data->index_buffer, 0, gaia_array_length(draw_data->index_buffer) * sizeof(u32));
 
-        gui_vao_attr(data->vao, data->vbo, 0, 3, GL_FLOAT, 10 * sizeof(f32), 0);
-        gui_vao_attr(data->vao, data->vbo, 1, 2, GL_FLOAT, 10 * sizeof(f32), 3 * sizeof(f32));
-        gui_vao_attr(data->vao, data->vbo, 2, 1, GL_FLOAT, 10 * sizeof(f32), 5 * sizeof(f32));
-        gui_vao_attr(data->vao, data->vbo, 3, 4, GL_FLOAT, 10 * sizeof(f32), 6 * sizeof(f32));
+        gui_vao_attr(data->vao, data->vbo, 0, 3, GL_FLOAT, 11 * sizeof(f32), 0 * sizeof(f32));
+        gui_vao_attr(data->vao, data->vbo, 1, 2, GL_FLOAT, 11 * sizeof(f32), 3 * sizeof(f32));
+        gui_vao_attr(data->vao, data->vbo, 2, 1, GL_FLOAT, 11 * sizeof(f32), 5 * sizeof(f32));
+        gui_vao_attr(data->vao, data->vbo, 3, 4, GL_FLOAT, 11 * sizeof(f32), 6 * sizeof(f32));
+        gui_vao_attr(data->vao, data->vbo, 4, 1, GL_FLOAT, 11 * sizeof(f32), 10 * sizeof(f32));
 
         gui_vao_bind(data->vao);
         gui_vbo_bind(data->ibo);
@@ -175,9 +177,9 @@ void gui_box_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s col
     f32 tex_index = gui_check_texture(&tex);
 
     mat4s transform = glms_mat4_mul(
-                                    glms_translate(glms_mat4_identity(), (vec3s){{pos.x, pos.y, 0}}),
-                                    glms_scale(glms_mat4_identity(), (vec3s){{size.x, size.y, 0}})
-                                    );
+                glms_translate(glms_mat4_identity(), (vec3s){{pos.x, pos.y, 0}}),
+                glms_scale(glms_mat4_identity(), (vec3s){{size.x, size.y, 0}})
+            );
 
     for(u32 i = 0; i < 4; i++) {
         vec4s pos = glms_mat4_mulv(transform, QUAD_VERTEX_POS[i]);
@@ -191,6 +193,7 @@ void gui_box_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4s col
         gaia_array_pushback(draw_list->vertex_buffer, color.y);
         gaia_array_pushback(draw_list->vertex_buffer, color.z);
         gaia_array_pushback(draw_list->vertex_buffer, color.w);
+        gaia_array_pushback(draw_list->vertex_buffer, 0);
     }
 
     gaia_array_length(draw_list->index_buffer) += 6;
@@ -229,17 +232,31 @@ void gui_text_add(struct GuiDrawList *draw_list, vec2s pos, f32 scale, const cha
             pos.y - (c.size.y - c.bearing.y) * scale
         }};
 
-        vec2s size = {{c.size.x * scale, c.size.y * scale}};
-
-        f32 vertecies[] = {
-            e_pox.x           , e_pox.y + size.y, 0, c.uv_min.x, c.uv_min.y, tex_index, 1, 1, 1, 1,
-            e_pox.x           , e_pox.y         , 0, c.uv_min.x, c.uv_max.y, tex_index, 1, 1, 1, 1,
-            e_pox.x + size.x  , e_pox.y         , 0, c.uv_max.x, c.uv_max.y, tex_index, 1, 1, 1, 1,
-            e_pox.x + size.x  , e_pox.y + size.y, 0, c.uv_max.x, c.uv_min.y, tex_index, 1, 1, 1, 1,
+        vec2s uv_cords[4] = {
+            {{c.uv_min.x, c.uv_max.y}},
+            {{c.uv_max.x, c.uv_max.y}},
+            {{c.uv_max.x, c.uv_min.y}},
+            {{c.uv_min.x, c.uv_min.y}}
         };
 
-        for(u32 i = 0; i < 40; i++) {
-            gaia_array_pushback(draw_list->vertex_buffer, vertecies[i]);
+        vec2s size = c.size;
+        mat4s transform = glms_mat4_mul(
+            glms_translate(glms_mat4_identity(), (vec3s){{e_pox.x, e_pox.y, 0}}),
+            glms_scale(glms_mat4_identity(), (vec3s){{size.x, size.y, 1.0f}})
+        );
+        for(u32 i = 0; i < 4; i++) {
+            vec3s pos = glms_mat4_mulv3(transform, (vec3s){{QUAD_VERTEX_POS[i].x, QUAD_VERTEX_POS[i].y, QUAD_VERTEX_POS[i].z}}, QUAD_VERTEX_POS[i].w);
+            gaia_array_pushback(draw_list->vertex_buffer, pos.x);
+            gaia_array_pushback(draw_list->vertex_buffer, pos.y);
+            gaia_array_pushback(draw_list->vertex_buffer, pos.z);
+            gaia_array_pushback(draw_list->vertex_buffer, uv_cords[i].x);
+            gaia_array_pushback(draw_list->vertex_buffer, uv_cords[i].y);
+            gaia_array_pushback(draw_list->vertex_buffer, tex_index);
+            gaia_array_pushback(draw_list->vertex_buffer, 1);
+            gaia_array_pushback(draw_list->vertex_buffer, 1);
+            gaia_array_pushback(draw_list->vertex_buffer, 1);
+            gaia_array_pushback(draw_list->vertex_buffer, 1);
+            gaia_array_pushback(draw_list->vertex_buffer, 1);
         }
         gaia_array_length(draw_list->index_buffer) += 6;
 
@@ -276,29 +293,29 @@ void gui_triangle_add(struct GuiDrawList *draw_list, vec2s pos, vec2s size, vec4
 
     f32 vertecies[] = {
         //x                 y             z  uv_mi|uv_ma
-        pos.x           , pos.y         , 0, 0.0f, 0.0f, tex_index, color.x, color.y, color.z, color.w,
-        pos.x           , pos.y + size.y, 0, 0.0f, 1.0f, tex_index, color.x, color.y, color.z, color.w,
-        pos.x + size.x  , pos.y + size.y, 0, 1.0f, 1.0f, tex_index, color.x, color.y, color.z, color.w,
-        pos.x + size.x  , pos.y         , 0, 1.0f, 0.0f, tex_index, color.x, color.y, color.z, color.w,
+        pos.x           , pos.y         , 0, 0.0f, 0.0f, tex_index, color.x, color.y, color.z, color.w, 0,
+        pos.x           , pos.y + size.y, 0, 0.0f, 1.0f, tex_index, color.x, color.y, color.z, color.w, 0,
+        pos.x + size.x  , pos.y + size.y, 0, 1.0f, 1.0f, tex_index, color.x, color.y, color.z, color.w, 0,
+        pos.x + size.x  , pos.y         , 0, 1.0f, 0.0f, tex_index, color.x, color.y, color.z, color.w, 0,
     };
 
     switch (side) {
         case GUI_TRIANGLE_CORNER_TOP_L:
-        vertecies[30] = pos.x;
+        vertecies[31] = pos.x;
         break;
         case GUI_TRIANGLE_CORNER_TOP_R:
         vertecies[0] = pos.x + size.x;
         break;
         case GUI_TRIANGLE_CORNER_BOTTOM_L:
-        vertecies[21] = pos.y;
+        vertecies[22] = pos.y;
         break;
         case GUI_TRIANGLE_CORNER_BOTTOM_R:
-        vertecies[11] = pos.y;
+        vertecies[12] = pos.y;
         break;
     }
 
     //indicies: {3, 0, 1, 3, 1, 2}
-    for(u32 i = 0; i < 40; i++) {
+    for(u32 i = 0; i < 44; i++) {
         gaia_array_pushback(draw_list->vertex_buffer, vertecies[i]);
     }
     gaia_array_length(draw_list->index_buffer) += 6;

@@ -54,7 +54,7 @@ typedef short int           s16;
 typedef signed char         s8;
 
 //unsigned types
-typedef unsigned long long  size_t;
+//typedef unsigned long long  size_t;
 typedef unsigned long long  u64;
 typedef unsigned int        u32;
 typedef unsigned short      u16;
@@ -87,6 +87,7 @@ typedef enum GuiWindowFlags_ {
     GUI_WINDOW_LOCKED = BIT(13),
     GUI_WINDOW_SCROLLABLE = BIT(14),
     GUI_WINDOW_IS_MENU = BIT(15),
+    GUI_WINDOW_IS_CHILD = BIT(16),
 }GuiWindowFlags_;
 
 typedef struct GuiStyle {

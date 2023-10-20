@@ -1,5 +1,6 @@
 #include "./../internal.h"
 #include "GLFW/glfw3.h"
+#include "cglm/struct/vec2.h"
 #include <time.h>
 
 struct GuiContext *ctx = NULL;
@@ -67,6 +68,7 @@ GUI_API void gui_frame_new() {
         }
     }
     //FIXME time_passed can overflow
+    g->io->mouse.delta = glms_vec2_zero();
     g->time_passed = (((f64)clock() - (f64)g->time) / 1000);
 }
 
